@@ -1,29 +1,28 @@
 'use strict'
 
-const { json } = require('body-parser')
-/**************************************************************************************************
-* Objetivo: Arquivo responsavel pela manipulacao de dado entre o app e a model para o CRUD de generos
-* Data: 22/10/2025
+
+/**********************************************************************************************************************
+* Objetivo: Arquivo responsavel pela manipulacao de dado entre o app e a model para o CRUD da classificacao indicativa
+* Data: 29/10/2025
 * Autor: Joao Victor Santos de Moraes
 * Versao: 1.0 
-***************************************************************************************************/
+***********************************************************************************************************************/
 
-const generoDAO = require('../../model/DAO/genero.js')
+const classificacao = require('../../model/DAO/classificacao_ind.js')
 const DEFAULT_MESSAGES = require('../modulo/config_messages.js')
 
-//Retorna uma lista de todos os filmes
-const listarGeneros = async () => {
+//Retorna uma lista com todas as classificações
+const listarClas = async () => {
     let messages = JSON.parse(JSON.stringify(DEFAULT_MESSAGES))
 
     try {
-        let generos = await generoDAO.getAllGeneros()
-
-        if (generos) {
-            if (generos.length > 0) {
+        let resultClas = await classificacao.getAllClas()
+        if (resultClas) {
+            if (resultClas.length > 0) {
                 messages.HEADER.status = messages.SUCCESS_REQUEST.status
                 messages.HEADER.status_code = messages.SUCCESS_REQUEST.status_code
                 messages.HEADER.message = messages.SUCCESS_REQUEST.message
-                messages.HEADER.items.generos = generos
+                messages.HEADER.items.classificacao = resultClas
 
                 return messages.HEADER
 
@@ -37,29 +36,34 @@ const listarGeneros = async () => {
         }
 
     } catch (error) {
-        console.log(error)
         return messages.ERROR_INTERNAL_SERVER_CONTROLLER
-    }
 
+    }
 }
 
-const selecionarGeneroId = async (id) => {
+//Retorna uma classificação pelo seu ID
+const listarClasId = async (id) => {
     let messages = JSON.parse(JSON.stringify(DEFAULT_MESSAGES))
 
     try {
-        if (id == !null || id == !undefined || id == !'' || !isNaN(id)) {
-            let genero = await generoDAO.getGeneroById(id)
+        if (id == undefined || id == '' || id == null || isNaN(id)) {
+            return messages.ERROR_REQUIRED_FIELDS
 
-            if (genero) {
-                if (genero.length > 0) {
+        } else {
+            let resultClas = await classificacao.getClasById(id)
+
+            if (resultClas) {
+                if (resultClas.length > 0) {
                     messages.HEADER.status = messages.SUCCESS_REQUEST.status
                     messages.HEADER.status_code = messages.SUCCESS_REQUEST.status_code
                     messages.HEADER.message = messages.SUCCESS_REQUEST.message
-                    messages.HEADER.items.genero = genero
+                    messages.HEADER.items.classificacao = resultClas
 
                     return messages.HEADER
+
                 } else {
                     return messages.ERROR_NOT_FOUND
+
                 }
 
             } else {
@@ -67,39 +71,39 @@ const selecionarGeneroId = async (id) => {
 
             }
 
-        } else {
-            return messages.ERROR_REQUIRED_FIELDS
         }
 
 
     } catch (error) {
         return messages.ERROR_INTERNAL_SERVER_CONTROLLER
-    }
 
+    }
 }
 
-//Inseri um novo genero na tabela
-const inserirGenero = async (genero, contentType) => {
+//Inseri uma nova classificação
+const inserirClas = async (clas, contentType) => {
     let messages = JSON.parse(JSON.stringify(DEFAULT_MESSAGES))
 
     try {
         if (String(contentType).toUpperCase() == 'APPLICATION/JSON') {
-            
-            if (genero.genero == '' || genero.genero == null || genero.genero == undefined || genero.length > 50) {
+            if (clas.classificacao == null || clas.classificacao == '' || clas.classificacao == undefined) {
                 return messages.ERROR_REQUIRED_FIELDS
 
             } else {
-                let resultGenero = await generoDAO.insertGenero(genero)
+                let resultClas = await classificacao.insertClas(clas)
 
-                if (resultGenero) {
+                if (resultClas) {
                     messages.HEADER.status = messages.SUCCESS_CREATED_ITEM.status
                     messages.HEADER.status_code = messages.SUCCESS_CREATED_ITEM.status_code
                     messages.HEADER.message = messages.SUCCESS_CREATED_ITEM.message
 
                     return messages.HEADER
+
                 } else {
                     return messages.ERROR_INTERNAL_SERVER_MODEL
+
                 }
+
             }
 
         } else {
@@ -111,49 +115,45 @@ const inserirGenero = async (genero, contentType) => {
         return messages.ERROR_INTERNAL_SERVER_CONTROLLER
 
     }
-
 }
 
-//Função para atualizar um genero
-const atualizarGenero = async (id, genero, contentType) => {
+//Atualiza uma classificação existente
+const atualizarClas = async (id, clas, contentType) => {
     let messages = JSON.parse(JSON.stringify(DEFAULT_MESSAGES))
-    
+
     try {
         if (String(contentType).toUpperCase() == 'APPLICATION/JSON') {
-            if (genero.genero == '' || genero.genero == null || genero.genero == undefined || genero.length > 50 || id == null || id == undefined || id == '' || isNaN(id)) {
+            if (clas.classificacao == null || clas.classificacao == '' || clas.classificacao == undefined || id == undefined || id == '' || id == null || isNaN(id)) {
                 return messages.ERROR_REQUIRED_FIELDS
 
             } else {
-                let resultId = await generoDAO.getGeneroById(id)
-
+                let resultId = await classificacao.getClasById(id)
                 if (resultId) {
                     if (resultId.length > 0) {
-                        let generoAtualizado = generoDAO.updateGenero(id, genero)
+                        let resultClas = await classificacao.updateClas(id, clas)
 
-                        if (generoAtualizado) {
+                        if (resultClas) {
                             messages.HEADER.status = messages.SUCCESS_UPDATED_ITEM.status
                             messages.HEADER.status_code = messages.SUCCESS_UPDATED_ITEM.status_code
                             messages.HEADER.message = messages.SUCCESS_UPDATED_ITEM.message
 
                             return messages.HEADER
+
                         } else {
                             return messages.ERROR_INTERNAL_SERVER_MODEL
 
                         }
 
-
                     } else {
                         return messages.ERROR_NOT_FOUND
 
                     }
-
                 } else {
                     return messages.ERROR_INTERNAL_SERVER_MODEL
 
                 }
 
             }
-
 
         } else {
             return messages.ERROR_CONTENT_TYPE
@@ -166,31 +166,44 @@ const atualizarGenero = async (id, genero, contentType) => {
     }
 }
 
-//Função para deletar Generos
-const deletarGenero = async (id) => {
+//Deleta uma classificação do banco
+const deletarClas = async (id) => {
     let messages = JSON.parse(JSON.stringify(DEFAULT_MESSAGES))
 
     try {
-        if (id == null || id == undefined || id == '' || isNaN(id)) {
+        if (id == undefined || id == '' || id == null || isNaN(id)) {
             return messages.ERROR_REQUIRED_FIELDS
 
         } else {
-            let genero = await generoDAO.deleteGenero(id)
+            let resultId = await classificacao.getClasById(id)
 
-            if (genero) {
-                messages.HEADER.status = messages.SUCCESS_DELETE_ITEM.status
-                messages.HEADER.status_code = messages.SUCCESS_DELETE_ITEM.status_code
-                messages.HEADER.message = messages.SUCCESS_DELETE_ITEM.message
-                delete messages.HEADER.items
+            if (resultId) {
+                if (resultId.length > 0) {
+                    let resultClas = await classificacao.deleteClas(id)
 
-                return messages.HEADER
+                    if (resultClas) {
+                        messages.HEADER.status = messages.SUCCESS_DELETE_ITEM.status
+                        messages.HEADER.status_code = messages.SUCCESS_DELETE_ITEM.status_code
+                        messages.HEADER.message = messages.SUCCESS_DELETE_ITEM.message
+
+                        return messages.HEADER
+
+                    } else {
+                        return messages.ERROR_INTERNAL_SERVER_MODEL
+
+                    }
+
+                } else {
+                    return messages.ERROR_NOT_FOUND
+
+                }
+
             } else {
                 return messages.ERROR_INTERNAL_SERVER_MODEL
 
             }
 
         }
-
 
     } catch (error) {
         return messages.ERROR_INTERNAL_SERVER_CONTROLLER
@@ -199,9 +212,9 @@ const deletarGenero = async (id) => {
 }
 
 module.exports = {
-    listarGeneros,
-    inserirGenero,
-    selecionarGeneroId,
-    atualizarGenero,
-    deletarGenero
+    listarClas,
+    listarClasId,
+    inserirClas,
+    atualizarClas,
+    deletarClas
 }
