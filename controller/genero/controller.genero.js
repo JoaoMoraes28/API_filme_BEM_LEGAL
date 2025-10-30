@@ -1,6 +1,5 @@
 'use strict'
 
-const { json } = require('body-parser')
 /**************************************************************************************************
 * Objetivo: Arquivo responsavel pela manipulacao de dado entre o app e a model para o CRUD de generos
 * Data: 22/10/2025

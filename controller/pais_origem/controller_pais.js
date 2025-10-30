@@ -1,35 +1,35 @@
 'use strict'
 
-
-/**********************************************************************************************************************
-* Objetivo: Arquivo responsavel pela manipulacao de dado entre o app e a model para o CRUD da classificacao indicativa
-* Data: 29/10/2025
+/****************************************************************************************************************
+* Objetivo: Arquivo responsavel pela manipulacao de dado entre o app e a model para o CRUD de paises de origem
+* Data: 22/10/2025
 * Autor: Joao Victor Santos de Moraes
 * Versao: 1.0 
-***********************************************************************************************************************/
+*****************************************************************************************************************/
 
-const classificacao = require('../../model/DAO/classificacao_ind.js')
+const paisOrigem = require('../../model/DAO/pais_origem.js')
 const DEFAULT_MESSAGES = require('../modulo/config_messages.js')
 
-//Retorna uma lista com todas as classificações
-const listarClas = async () => {
+//Listar todos os paises
+const listarPaises = async () => {
     let messages = JSON.parse(JSON.stringify(DEFAULT_MESSAGES))
 
     try {
-        let resultClas = await classificacao.getAllClas()
-        if (resultClas) {
-            if (resultClas.length > 0) {
+        let resultPais = await paisOrigem.getAllCountry()
+
+        if (resultPais) {
+            if (resultPais.length > 0) {
                 messages.HEADER.status = messages.SUCCESS_REQUEST.status
                 messages.HEADER.status_code = messages.SUCCESS_REQUEST.status_code
                 messages.HEADER.message = messages.SUCCESS_REQUEST.message
-                messages.HEADER.items.classificacao = resultClas
+                messages.HEADER.items.pais = resultPais
 
                 return messages.HEADER
 
             } else {
                 return messages.ERROR_NOT_FOUND
-
             }
+
         } else {
             return messages.ERROR_INTERNAL_SERVER_MODEL
 
@@ -41,8 +41,8 @@ const listarClas = async () => {
     }
 }
 
-//Retorna uma classificação pelo seu ID
-const listarClasId = async (id) => {
+//Listar um pais por ID
+const listarPaisId = async (id) => {
     let messages = JSON.parse(JSON.stringify(DEFAULT_MESSAGES))
 
     try {
@@ -50,14 +50,14 @@ const listarClasId = async (id) => {
             return messages.ERROR_REQUIRED_FIELDS
 
         } else {
-            let resultClas = await classificacao.getClasById(id)
+            let resultPais = await paisOrigem.getCountryId(id)
 
-            if (resultClas) {
-                if (resultClas.length > 0) {
+            if (resultPais) {
+                if (resultPais.length > 0) {
                     messages.HEADER.status = messages.SUCCESS_REQUEST.status
                     messages.HEADER.status_code = messages.SUCCESS_REQUEST.status_code
                     messages.HEADER.message = messages.SUCCESS_REQUEST.message
-                    messages.HEADER.items.classificacao = resultClas
+                    messages.HEADER.items.pais = resultPais
 
                     return messages.HEADER
 
@@ -70,9 +70,7 @@ const listarClasId = async (id) => {
                 return messages.ERROR_INTERNAL_SERVER_MODEL
 
             }
-
         }
-
 
     } catch (error) {
         return messages.ERROR_INTERNAL_SERVER_CONTROLLER
@@ -80,19 +78,19 @@ const listarClasId = async (id) => {
     }
 }
 
-//Inseri uma nova classificação
-const inserirClas = async (clas, contentType) => {
+//Inserir um novo pais
+const inserirPais = async (pais, contentType) => {
     let messages = JSON.parse(JSON.stringify(DEFAULT_MESSAGES))
 
     try {
         if (String(contentType).toUpperCase() == 'APPLICATION/JSON') {
-            if (clas.classificacao == null || clas.classificacao == '' || clas.classificacao == undefined || clas.classificacao.length > 50) {
+            if (pais.pais == null || pais.pais == '' || pais.pais == undefined || pais.pais.length > 50) {
                 return messages.ERROR_REQUIRED_FIELDS
 
             } else {
-                let resultClas = await classificacao.insertClas(clas)
+                let resultPais = await paisOrigem.insertCountry(pais)
 
-                if (resultClas) {
+                if (resultPais) {
                     messages.HEADER.status = messages.SUCCESS_CREATED_ITEM.status
                     messages.HEADER.status_code = messages.SUCCESS_CREATED_ITEM.status_code
                     messages.HEADER.message = messages.SUCCESS_CREATED_ITEM.message
@@ -103,7 +101,6 @@ const inserirClas = async (clas, contentType) => {
                     return messages.ERROR_INTERNAL_SERVER_MODEL
 
                 }
-
             }
 
         } else {
@@ -117,22 +114,22 @@ const inserirClas = async (clas, contentType) => {
     }
 }
 
-//Atualiza uma classificação existente
-const atualizarClas = async (id, clas, contentType) => {
+//Atualizar um pais
+const atualizarPais = async (id, pais, contentType) => {
     let messages = JSON.parse(JSON.stringify(DEFAULT_MESSAGES))
 
     try {
         if (String(contentType).toUpperCase() == 'APPLICATION/JSON') {
-            if (clas.classificacao == null || clas.classificacao == '' || clas.classificacao == undefined || clas.classificacao.length > 50 || id == undefined || id == '' || id == null || isNaN(id)) {
+            if (pais.pais == null || pais.pais == '' || pais.pais == undefined || pais.pais.length > 50 || id == null || id == '' || id == undefined || isNaN(id)) {
                 return messages.ERROR_REQUIRED_FIELDS
 
             } else {
-                let resultId = await classificacao.getClasById(id)
+                let resultId = await paisOrigem.getCountryId(id)
                 if (resultId) {
                     if (resultId.length > 0) {
-                        let resultClas = await classificacao.updateClas(id, clas)
+                        let resultPais = await paisOrigem.updateCountry(pais, id)
 
-                        if (resultClas) {
+                        if (resultPais) {
                             messages.HEADER.status = messages.SUCCESS_UPDATED_ITEM.status
                             messages.HEADER.status_code = messages.SUCCESS_UPDATED_ITEM.status_code
                             messages.HEADER.message = messages.SUCCESS_UPDATED_ITEM.message
@@ -143,22 +140,19 @@ const atualizarClas = async (id, clas, contentType) => {
                             return messages.ERROR_INTERNAL_SERVER_MODEL
 
                         }
-
                     } else {
                         return messages.ERROR_NOT_FOUND
-
                     }
                 } else {
                     return messages.ERROR_INTERNAL_SERVER_MODEL
-
                 }
 
             }
 
         } else {
             return messages.ERROR_CONTENT_TYPE
-
         }
+
 
     } catch (error) {
         return messages.ERROR_INTERNAL_SERVER_CONTROLLER
@@ -166,8 +160,8 @@ const atualizarClas = async (id, clas, contentType) => {
     }
 }
 
-//Deleta uma classificação do banco
-const deletarClas = async (id) => {
+//Deletar um pais
+const deletarPais = async (id) => {
     let messages = JSON.parse(JSON.stringify(DEFAULT_MESSAGES))
 
     try {
@@ -175,13 +169,12 @@ const deletarClas = async (id) => {
             return messages.ERROR_REQUIRED_FIELDS
 
         } else {
-            let resultId = await classificacao.getClasById(id)
-
+            let resultId = await paisOrigem.getCountryId(id)
             if (resultId) {
                 if (resultId.length > 0) {
-                    let resultClas = await classificacao.deleteClas(id)
+                    let resultPais = await paisOrigem.deleteCountry(id)
 
-                    if (resultClas) {
+                    if (resultPais) {
                         messages.HEADER.status = messages.SUCCESS_DELETE_ITEM.status
                         messages.HEADER.status_code = messages.SUCCESS_DELETE_ITEM.status_code
                         messages.HEADER.message = messages.SUCCESS_DELETE_ITEM.message
@@ -192,17 +185,14 @@ const deletarClas = async (id) => {
                         return messages.ERROR_INTERNAL_SERVER_MODEL
 
                     }
-
                 } else {
                     return messages.ERROR_NOT_FOUND
 
                 }
-
             } else {
                 return messages.ERROR_INTERNAL_SERVER_MODEL
 
             }
-
         }
 
     } catch (error) {
@@ -212,9 +202,9 @@ const deletarClas = async (id) => {
 }
 
 module.exports = {
-    listarClas,
-    listarClasId,
-    inserirClas,
-    atualizarClas,
-    deletarClas
+    listarPaises,
+    listarPaisId,
+    inserirPais,
+    atualizarPais,
+    deletarPais
 }

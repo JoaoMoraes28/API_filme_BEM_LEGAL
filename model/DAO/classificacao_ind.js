@@ -16,7 +16,7 @@ const prisma = new PrismaClient()
 //Função que retorna todos as classificações
 const getAllClas = async () => {
     try {
-        let sql = 'select * from tbl_classificacao_indicativa'
+        let sql = 'select * from tbl_classificacao_indicativa order by id desc'
 
         let result = await prisma.$queryRawUnsafe(sql)
 
