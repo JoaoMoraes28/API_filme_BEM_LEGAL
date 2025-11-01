@@ -116,10 +116,33 @@ const deleteClas = async (id) => {
     }
 }
 
+//Função para obter o último ID de idiomas
+const getLastId = async () => {
+    try {
+        let sql = 'select id from tbl_classificacao_indicativa order by desc limit 1'
+
+        let result = await prisma.$queryRawUnsafe(sql)
+
+        if (Array.isArray(result)) {
+            return Number(result[0].id)
+
+        } else {
+            return false
+
+        }
+
+    } catch (error) {
+        return false
+
+    }
+
+}
+
 module.exports = {
     getAllClas,
     getClasById,
     insertClas,
     updateClas,
-    deleteClas
+    deleteClas,
+    getLastId
 }

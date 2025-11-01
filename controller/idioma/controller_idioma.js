@@ -1,35 +1,35 @@
 'use strict'
 
-/****************************************************************************************************************
-* Objetivo: Arquivo responsavel pela manipulacao de dado entre o app e a model para o CRUD de paises de origem
+/**************************************************************************************************
+* Objetivo: Arquivo responsavel pela manipulacao de dado entre o app e a model para o CRUD de generos
 * Data: 30/10/2025
 * Autor: Joao Victor Santos de Moraes
 * Versao: 1.0 
-*****************************************************************************************************************/
+***************************************************************************************************/
 
-const paisOrigemDAO = require('../../model/DAO/pais_origem.js')
+const idiomaDAO = require('../../model/DAO/idioma.js')
 const DEFAULT_MESSAGES = require('../modulo/config_messages.js')
 
-//Listar todos os paises
-const listarPaises = async () => {
+//Listar todos os idiomas
+const listarIdiomas = async () => {
     let messages = JSON.parse(JSON.stringify(DEFAULT_MESSAGES))
 
     try {
-        let resultPais = await paisOrigemDAO.getAllCountry()
+        let resultIdioma = await idiomaDAO.getAllLanguage()
 
-        if (resultPais) {
-            if (resultPais.length > 0) {
+        if (resultIdioma) {
+            if (resultIdioma.length > 0) {
                 messages.HEADER.status = messages.SUCCESS_REQUEST.status
                 messages.HEADER.status_code = messages.SUCCESS_REQUEST.status_code
                 messages.HEADER.message = messages.SUCCESS_REQUEST.message
-                messages.HEADER.items.pais = resultPais
+                messages.HEADER.items.idiomas = resultIdioma
 
                 return messages.HEADER
 
             } else {
                 return messages.ERROR_NOT_FOUND
-            }
 
+            }
         } else {
             return messages.ERROR_INTERNAL_SERVER_MODEL
 
@@ -41,8 +41,8 @@ const listarPaises = async () => {
     }
 }
 
-//Listar um pais por ID
-const listarPaisId = async (id) => {
+//Obter um idioma pelo seu ID
+const listarIdiomaId = async (id) => {
     let messages = JSON.parse(JSON.stringify(DEFAULT_MESSAGES))
 
     try {
@@ -50,14 +50,14 @@ const listarPaisId = async (id) => {
             return messages.ERROR_REQUIRED_FIELDS
 
         } else {
-            let resultPais = await paisOrigemDAO.getCountryId(id)
+            let resultIdioma = await idiomaDAO.getLanguageId(id)
 
-            if (resultPais) {
-                if (resultPais.length > 0) {
+            if (resultIdioma) {
+                if (resultIdioma.length > 0) {
                     messages.HEADER.status = messages.SUCCESS_REQUEST.status
                     messages.HEADER.status_code = messages.SUCCESS_REQUEST.status_code
                     messages.HEADER.message = messages.SUCCESS_REQUEST.message
-                    messages.HEADER.items.pais = resultPais
+                    messages.HEADER.items.idioma = resultIdioma
 
                     return messages.HEADER
 
@@ -65,11 +65,11 @@ const listarPaisId = async (id) => {
                     return messages.ERROR_NOT_FOUND
 
                 }
-
             } else {
                 return messages.ERROR_INTERNAL_SERVER_MODEL
 
             }
+
         }
 
     } catch (error) {
@@ -78,27 +78,27 @@ const listarPaisId = async (id) => {
     }
 }
 
-//Inserir um novo pais
-const inserirPais = async (pais, contentType) => {
+//Inserir um novo idioma
+const inserirIdioma = async (idioma, contentType) => {
     let messages = JSON.parse(JSON.stringify(DEFAULT_MESSAGES))
 
     try {
         if (String(contentType).toUpperCase() == 'APPLICATION/JSON') {
-            if (pais.pais == null || pais.pais == '' || pais.pais == undefined || pais.pais.length > 50) {
-                return messages.ERROR_REQUIRED_FIELDS += '[País inválido]'
+            if (idioma.idioma == '' || idioma.idioma == undefined || idioma.idioma == null || idioma.idioma.length > 50) {
+                return messages.ERROR_REQUIRED_FIELDS
 
             } else {
-                let resultPais = await paisOrigemDAO.insertCountry(pais)
+                let resultIdioma = await idiomaDAO.insertLanguage(idioma)
 
-                if (resultPais) {
-                    let id = await paisOrigemDAO.getLastId()
+                if (resultIdioma) {
+                    let id = await idiomaDAO.getLastId()
 
                     if (id) {
                         messages.HEADER.status = messages.SUCCESS_CREATED_ITEM.status
                         messages.HEADER.status_code = messages.SUCCESS_CREATED_ITEM.status_code
                         messages.HEADER.message = messages.SUCCESS_CREATED_ITEM.message
-                        pais.id = id
-                        messages.HEADER.items.pais = pais
+                        idioma.id = id
+                        messages.HEADER.items.idioma = idioma
 
                         return messages.HEADER
 
@@ -111,6 +111,7 @@ const inserirPais = async (pais, contentType) => {
                     return messages.ERROR_INTERNAL_SERVER_MODEL
 
                 }
+
             }
 
         } else {
@@ -118,28 +119,29 @@ const inserirPais = async (pais, contentType) => {
 
         }
 
+
     } catch (error) {
         return messages.ERROR_INTERNAL_SERVER_CONTROLLER
 
     }
 }
 
-//Atualizar um pais
-const atualizarPais = async (id, pais, contentType) => {
+//Atualizar um idioma existente
+const atualizarIdioma = async (id, idioma, contentType) => {
     let messages = JSON.parse(JSON.stringify(DEFAULT_MESSAGES))
 
     try {
         if (String(contentType).toUpperCase() == 'APPLICATION/JSON') {
-            if (pais.pais == null || pais.pais == '' || pais.pais == undefined || pais.pais.length > 50) {
-                return messages.ERROR_REQUIRED_FIELDS += '[País inválido]'
+            if (idioma.idioma == '' || idioma.idioma == undefined || idioma.idioma == null || idioma.idioma.length > 50) {
+                return messages.ERROR_REQUIRED_FIELDS += '[Idioma inválido]'
 
             } else {
-                let resultId = await listarPaisId(id)
+                let resultId = await listarIdiomaId(id)
 
                 if (resultId.status_code == 200) {
-                    let resultPais = await paisOrigemDAO.updateCountry(pais, id)
+                    let resultIdioma = await idiomaDAO.updateLanguage(id, idioma)
 
-                    if (resultPais) {
+                    if (resultIdioma) {
                         messages.HEADER.status = messages.SUCCESS_UPDATED_ITEM.status
                         messages.HEADER.status_code = messages.SUCCESS_UPDATED_ITEM.status_code
                         messages.HEADER.message = messages.SUCCESS_UPDATED_ITEM.message
@@ -169,17 +171,17 @@ const atualizarPais = async (id, pais, contentType) => {
     }
 }
 
-//Deletar um pais
-const deletarPais = async (id) => {
+//Deletar um idioma
+const deletarIdioma = async (id) => {
     let messages = JSON.parse(JSON.stringify(DEFAULT_MESSAGES))
 
     try {
-        let resultId = await listarPaisId(id)
+        let resultId = await listarIdiomaId(id)
 
         if (resultId.status_code == 200) {
-            let resultPais = await paisOrigemDAO.deleteCountry(id)
+            let resultIdioma = await idiomaDAO.deleteLanguage(id)
 
-            if (resultPais) {
+            if (resultIdioma) {
                 messages.HEADER.status = messages.SUCCESS_DELETE_ITEM.status
                 messages.HEADER.status_code = messages.SUCCESS_DELETE_ITEM.status_code
                 messages.HEADER.message = messages.SUCCESS_DELETE_ITEM.message
@@ -203,9 +205,9 @@ const deletarPais = async (id) => {
 }
 
 module.exports = {
-    listarPaises,
-    listarPaisId,
-    inserirPais,
-    atualizarPais,
-    deletarPais
+    listarIdiomas,
+    listarIdiomaId,
+    inserirIdioma,
+    atualizarIdioma,
+    deletarIdioma
 }

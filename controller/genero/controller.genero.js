@@ -59,6 +59,7 @@ const selecionarGeneroId = async (id) => {
                     return messages.HEADER
                 } else {
                     return messages.ERROR_NOT_FOUND
+
                 }
 
             } else {
@@ -68,6 +69,7 @@ const selecionarGeneroId = async (id) => {
 
         } else {
             return messages.ERROR_REQUIRED_FIELDS
+
         }
 
 
@@ -83,21 +85,33 @@ const inserirGenero = async (genero, contentType) => {
 
     try {
         if (String(contentType).toUpperCase() == 'APPLICATION/JSON') {
-            
+
             if (genero.genero == '' || genero.genero == null || genero.genero == undefined || genero.length > 50) {
-                return messages.ERROR_REQUIRED_FIELDS
+                return messages.ERROR_REQUIRED_FIELDS += '[Gênero inválido]'
 
             } else {
                 let resultGenero = await generoDAO.insertGenero(genero)
 
                 if (resultGenero) {
-                    messages.HEADER.status = messages.SUCCESS_CREATED_ITEM.status
-                    messages.HEADER.status_code = messages.SUCCESS_CREATED_ITEM.status_code
-                    messages.HEADER.message = messages.SUCCESS_CREATED_ITEM.message
+                    let id = await generoDAO.getLastId()
 
-                    return messages.HEADER
+                    if (id) {
+                        messages.HEADER.status = messages.SUCCESS_CREATED_ITEM.status
+                        messages.HEADER.status_code = messages.SUCCESS_CREATED_ITEM.status_code
+                        messages.HEADER.message = messages.SUCCESS_CREATED_ITEM.message
+                        genero.id = id
+                        messages.HEADER.items.genero = genero
+
+                        return messages.HEADER
+
+                    } else {
+                        return messages.ERROR_INTERNAL_SERVER_MODEL
+
+                    }
+
                 } else {
                     return messages.ERROR_INTERNAL_SERVER_MODEL
+
                 }
             }
 
@@ -116,43 +130,35 @@ const inserirGenero = async (genero, contentType) => {
 //Função para atualizar um genero
 const atualizarGenero = async (id, genero, contentType) => {
     let messages = JSON.parse(JSON.stringify(DEFAULT_MESSAGES))
-    
+
     try {
         if (String(contentType).toUpperCase() == 'APPLICATION/JSON') {
-            if (genero.genero == '' || genero.genero == null || genero.genero == undefined || genero.length > 50 || id == null || id == undefined || id == '' || isNaN(id)) {
-                return messages.ERROR_REQUIRED_FIELDS
+            if (genero.genero == '' || genero.genero == null || genero.genero == undefined || genero.length > 50) {
+                return messages.ERROR_REQUIRED_FIELDS += '[Gênero inválido]'
 
             } else {
-                let resultId = await generoDAO.getGeneroById(id)
+                let resultId = await selecionarGeneroId(id)
 
-                if (resultId) {
-                    if (resultId.length > 0) {
-                        let generoAtualizado = generoDAO.updateGenero(id, genero)
+                if (resultId.status_code == 200) {
+                    let generoAtualizado = generoDAO.updateGenero(id, genero)
 
-                        if (generoAtualizado) {
-                            messages.HEADER.status = messages.SUCCESS_UPDATED_ITEM.status
-                            messages.HEADER.status_code = messages.SUCCESS_UPDATED_ITEM.status_code
-                            messages.HEADER.message = messages.SUCCESS_UPDATED_ITEM.message
+                    if (generoAtualizado) {
+                        messages.HEADER.status = messages.SUCCESS_UPDATED_ITEM.status
+                        messages.HEADER.status_code = messages.SUCCESS_UPDATED_ITEM.status_code
+                        messages.HEADER.message = messages.SUCCESS_UPDATED_ITEM.message
 
-                            return messages.HEADER
-                        } else {
-                            return messages.ERROR_INTERNAL_SERVER_MODEL
-
-                        }
-
-
+                        return messages.HEADER
                     } else {
-                        return messages.ERROR_NOT_FOUND
+                        return messages.ERROR_INTERNAL_SERVER_MODEL
 
                     }
 
                 } else {
-                    return messages.ERROR_INTERNAL_SERVER_MODEL
+                    return resultId
 
                 }
 
             }
-
 
         } else {
             return messages.ERROR_CONTENT_TYPE
@@ -170,10 +176,9 @@ const deletarGenero = async (id) => {
     let messages = JSON.parse(JSON.stringify(DEFAULT_MESSAGES))
 
     try {
-        if (id == null || id == undefined || id == '' || isNaN(id)) {
-            return messages.ERROR_REQUIRED_FIELDS
+        let resultId = await selecionarGeneroId(id)
 
-        } else {
+        if (resultId.status_code == 200) {
             let genero = await generoDAO.deleteGenero(id)
 
             if (genero) {
@@ -183,13 +188,16 @@ const deletarGenero = async (id) => {
                 delete messages.HEADER.items
 
                 return messages.HEADER
+
             } else {
                 return messages.ERROR_INTERNAL_SERVER_MODEL
 
             }
 
-        }
+        } else {
+            return resultId
 
+        }
 
     } catch (error) {
         return messages.ERROR_INTERNAL_SERVER_CONTROLLER

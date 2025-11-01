@@ -8,7 +8,7 @@
 * Versao: 1.0 
 ***********************************************************************************************************************/
 
-const classificacao = require('../../model/DAO/classificacao_ind.js')
+const classificacaoDAO = require('../../model/DAO/classificacao_ind.js')
 const DEFAULT_MESSAGES = require('../modulo/config_messages.js')
 
 //Retorna uma lista com todas as classificações
@@ -16,7 +16,7 @@ const listarClas = async () => {
     let messages = JSON.parse(JSON.stringify(DEFAULT_MESSAGES))
 
     try {
-        let resultClas = await classificacao.getAllClas()
+        let resultClas = await classificacaoDAO.getAllClas()
         if (resultClas) {
             if (resultClas.length > 0) {
                 messages.HEADER.status = messages.SUCCESS_REQUEST.status
@@ -50,7 +50,7 @@ const listarClasId = async (id) => {
             return messages.ERROR_REQUIRED_FIELDS
 
         } else {
-            let resultClas = await classificacao.getClasById(id)
+            let resultClas = await classificacaoDAO.getClasById(id)
 
             if (resultClas) {
                 if (resultClas.length > 0) {
@@ -87,17 +87,27 @@ const inserirClas = async (clas, contentType) => {
     try {
         if (String(contentType).toUpperCase() == 'APPLICATION/JSON') {
             if (clas.classificacao == null || clas.classificacao == '' || clas.classificacao == undefined || clas.classificacao.length > 50) {
-                return messages.ERROR_REQUIRED_FIELDS
+                return messages.ERROR_REQUIRED_FIELDS += '[Classificação indicativa inválida]'
 
             } else {
-                let resultClas = await classificacao.insertClas(clas)
+                let resultClas = await classificacaoDAO.insertClas(clas)
 
                 if (resultClas) {
-                    messages.HEADER.status = messages.SUCCESS_CREATED_ITEM.status
-                    messages.HEADER.status_code = messages.SUCCESS_CREATED_ITEM.status_code
-                    messages.HEADER.message = messages.SUCCESS_CREATED_ITEM.message
+                    let id = await classificacaoDAO.getLastId()
 
-                    return messages.HEADER
+                    if (id) {
+                        messages.HEADER.status = messages.SUCCESS_CREATED_ITEM.status
+                        messages.HEADER.status_code = messages.SUCCESS_CREATED_ITEM.status_code
+                        messages.HEADER.message = messages.SUCCESS_CREATED_ITEM.message
+                        clas.id = id
+                        messages.HEADER.items.classificacao = clas
+                        
+                        return messages.HEADER
+
+                    } else {
+                        return messages.ERROR_INTERNAL_SERVER_MODEL
+
+                    }
 
                 } else {
                     return messages.ERROR_INTERNAL_SERVER_MODEL
@@ -123,33 +133,29 @@ const atualizarClas = async (id, clas, contentType) => {
 
     try {
         if (String(contentType).toUpperCase() == 'APPLICATION/JSON') {
-            if (clas.classificacao == null || clas.classificacao == '' || clas.classificacao == undefined || clas.classificacao.length > 50 || id == undefined || id == '' || id == null || isNaN(id)) {
-                return messages.ERROR_REQUIRED_FIELDS
+            if (clas.classificacao == null || clas.classificacao == '' || clas.classificacao == undefined || clas.classificacao.length > 50) {
+                return messages.ERROR_REQUIRED_FIELDS += '[Classificação indicativa inválida]'
 
             } else {
-                let resultId = await classificacao.getClasById(id)
-                if (resultId) {
-                    if (resultId.length > 0) {
-                        let resultClas = await classificacao.updateClas(id, clas)
+                let resultId = await listarClasId(id)
 
-                        if (resultClas) {
-                            messages.HEADER.status = messages.SUCCESS_UPDATED_ITEM.status
-                            messages.HEADER.status_code = messages.SUCCESS_UPDATED_ITEM.status_code
-                            messages.HEADER.message = messages.SUCCESS_UPDATED_ITEM.message
+                if (resultId.status_code == 200) {
+                    let resultClas = await classificacaoDAO.updateClas(id, clas)
 
-                            return messages.HEADER
+                    if (resultClas) {
+                        messages.HEADER.status = messages.SUCCESS_UPDATED_ITEM.status
+                        messages.HEADER.status_code = messages.SUCCESS_UPDATED_ITEM.status_code
+                        messages.HEADER.message = messages.SUCCESS_UPDATED_ITEM.message
 
-                        } else {
-                            return messages.ERROR_INTERNAL_SERVER_MODEL
-
-                        }
+                        return messages.HEADER
 
                     } else {
-                        return messages.ERROR_NOT_FOUND
+                        return messages.ERROR_INTERNAL_SERVER_MODEL
 
                     }
+
                 } else {
-                    return messages.ERROR_INTERNAL_SERVER_MODEL
+                    return resultId
 
                 }
 
@@ -171,37 +177,25 @@ const deletarClas = async (id) => {
     let messages = JSON.parse(JSON.stringify(DEFAULT_MESSAGES))
 
     try {
-        if (id == undefined || id == '' || id == null || isNaN(id)) {
-            return messages.ERROR_REQUIRED_FIELDS
+        let resultId = await listarClasId(id)
 
-        } else {
-            let resultId = await classificacao.getClasById(id)
+        if (resultId.status_code == 200) {
+            let resultClas = await classificacaoDAO.deleteClas(id)
 
-            if (resultId) {
-                if (resultId.length > 0) {
-                    let resultClas = await classificacao.deleteClas(id)
+            if (resultClas) {
+                messages.HEADER.status = messages.SUCCESS_DELETE_ITEM.status
+                messages.HEADER.status_code = messages.SUCCESS_DELETE_ITEM.status_code
+                messages.HEADER.message = messages.SUCCESS_DELETE_ITEM.message
 
-                    if (resultClas) {
-                        messages.HEADER.status = messages.SUCCESS_DELETE_ITEM.status
-                        messages.HEADER.status_code = messages.SUCCESS_DELETE_ITEM.status_code
-                        messages.HEADER.message = messages.SUCCESS_DELETE_ITEM.message
-
-                        return messages.HEADER
-
-                    } else {
-                        return messages.ERROR_INTERNAL_SERVER_MODEL
-
-                    }
-
-                } else {
-                    return messages.ERROR_NOT_FOUND
-
-                }
+                return messages.HEADER
 
             } else {
                 return messages.ERROR_INTERNAL_SERVER_MODEL
 
             }
+
+        } else {
+            return resultId
 
         }
 

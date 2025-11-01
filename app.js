@@ -13,6 +13,7 @@ const routerFilmes = require('./routes/filme/routes_filme.js')
 const routerGeneros = require('./routes/genero/routes_genero.js')
 const routerClassificacao = require('./routes/classificacao/routes_classificacao.js')
 const routerPaises = require('./routes/pais_origem/routers_paises.js')
+const routerIdioma = require('./routes/idioma/routes_idioma.js')
 
 const PORT = process.PORT || 8080
 
@@ -35,6 +36,8 @@ app.use('/v1/locadora/genero', routerGeneros)
 app.use('/v1/locadora/classificacao_indicativa', routerClassificacao)
 
 app.use('/v1/locadora/paises', routerPaises)
+
+app.use('/v1/locadora/idioma', routerIdioma)
 
 app.listen(PORT, () => {
     console.log('API aguardando requisições...')

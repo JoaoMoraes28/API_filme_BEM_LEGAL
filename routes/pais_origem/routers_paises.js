@@ -1,5 +1,12 @@
 'use strict'
 
+/*****************************************************************************************************
+* Objetivo: Arquivo responsavel pelas rotas da API da locadora de filmes para o arquivo pais_origem
+* Data: 30/10/2025
+* Autor: Joao Victor Santos de Moraes
+* Versao: 1.0 
+******************************************************************************************************/
+
 const express = require('express')
 const routerPais = express.Router()
 const cors = require('cors')
