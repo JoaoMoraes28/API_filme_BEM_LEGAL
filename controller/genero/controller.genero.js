@@ -146,6 +146,7 @@ const atualizarGenero = async (id, genero, contentType) => {
                         messages.HEADER.status = messages.SUCCESS_UPDATED_ITEM.status
                         messages.HEADER.status_code = messages.SUCCESS_UPDATED_ITEM.status_code
                         messages.HEADER.message = messages.SUCCESS_UPDATED_ITEM.message
+                        delete messages.HEADER.items
 
                         return messages.HEADER
                     } else {
@@ -154,6 +155,7 @@ const atualizarGenero = async (id, genero, contentType) => {
                     }
 
                 } else {
+                    resultId.message += '[ID não encontrado]'
                     return resultId
 
                 }
@@ -195,6 +197,7 @@ const deletarGenero = async (id) => {
             }
 
         } else {
+            resultId.message += '[ID não encontrado]'
             return resultId
 
         }

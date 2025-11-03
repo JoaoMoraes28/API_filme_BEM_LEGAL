@@ -45,7 +45,7 @@ routerIdioma.put('/:id', cors(), bodyParserJSON, async (request, response) => {
     let bodyContent = request.body
     let contentType = request.headers["content-type"]
 
-    let idioma = await controllerIdioma(id, bodyContent, contentType)
+    let idioma = await controllerIdioma.atualizarIdioma(id, bodyContent, contentType)
 
     response.status(idioma.status_code)
     response.json(idioma)

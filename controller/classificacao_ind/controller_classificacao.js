@@ -101,7 +101,7 @@ const inserirClas = async (clas, contentType) => {
                         messages.HEADER.message = messages.SUCCESS_CREATED_ITEM.message
                         clas.id = id
                         messages.HEADER.items.classificacao = clas
-                        
+
                         return messages.HEADER
 
                     } else {
@@ -146,6 +146,7 @@ const atualizarClas = async (id, clas, contentType) => {
                         messages.HEADER.status = messages.SUCCESS_UPDATED_ITEM.status
                         messages.HEADER.status_code = messages.SUCCESS_UPDATED_ITEM.status_code
                         messages.HEADER.message = messages.SUCCESS_UPDATED_ITEM.message
+                        delete messages.HEADER.items
 
                         return messages.HEADER
 
@@ -155,6 +156,7 @@ const atualizarClas = async (id, clas, contentType) => {
                     }
 
                 } else {
+                    resultId.message += '[ID não encontrado]'
                     return resultId
 
                 }
@@ -186,6 +188,7 @@ const deletarClas = async (id) => {
                 messages.HEADER.status = messages.SUCCESS_DELETE_ITEM.status
                 messages.HEADER.status_code = messages.SUCCESS_DELETE_ITEM.status_code
                 messages.HEADER.message = messages.SUCCESS_DELETE_ITEM.message
+                delete messages.HEADER.items
 
                 return messages.HEADER
 
@@ -195,6 +198,7 @@ const deletarClas = async (id) => {
             }
 
         } else {
+            resultId.message += '[ID não encontrado]'
             return resultId
 
         }

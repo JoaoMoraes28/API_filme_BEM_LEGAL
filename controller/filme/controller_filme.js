@@ -163,6 +163,7 @@ const atualizarFilme = async (filme, id, contentType) => {
                     }
 
                 } else {
+                    validarId.message += '[ID não encontrado]'
                     return validarId //Função buscar filme ID
 
                 }
@@ -207,6 +208,7 @@ const excluirFilme = async (id) => {
             }
 
         } else {
+            validarId.message += '[ID não encontrado]'
             return validarId //Função buscar filme ID
 
         }

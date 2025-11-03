@@ -14,7 +14,7 @@ const prisma = new PrismaClient()
 //Função para listar todos os idiomas
 const getAllLanguage = async () => {
     try {
-        let sql = 'select * from tbl_idioma order by desc'
+        let sql = 'select * from tbl_idioma order by id desc'
 
         let result = await prisma.$queryRawUnsafe(sql)
         if (result) {
@@ -118,7 +118,7 @@ const deleteLanguage = async (id) => {
 //Função para obter o último ID de idiomas
 const getLastId = async () => {
     try {
-        let sql = 'select id from tbl_idioma order by desc limit 1'
+        let sql = 'select id from tbl_idioma order by id desc limit 1'
 
         let result = await prisma.$queryRawUnsafe(sql)
 

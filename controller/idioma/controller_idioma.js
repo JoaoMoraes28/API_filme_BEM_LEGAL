@@ -145,6 +145,7 @@ const atualizarIdioma = async (id, idioma, contentType) => {
                         messages.HEADER.status = messages.SUCCESS_UPDATED_ITEM.status
                         messages.HEADER.status_code = messages.SUCCESS_UPDATED_ITEM.status_code
                         messages.HEADER.message = messages.SUCCESS_UPDATED_ITEM.message
+                        delete messages.HEADER.items
 
                         return messages.HEADER
 
@@ -154,6 +155,7 @@ const atualizarIdioma = async (id, idioma, contentType) => {
                     }
 
                 } else {
+                    resultId.message += '[ID não encontrado]'
                     return resultId
 
                 }
@@ -185,6 +187,7 @@ const deletarIdioma = async (id) => {
                 messages.HEADER.status = messages.SUCCESS_DELETE_ITEM.status
                 messages.HEADER.status_code = messages.SUCCESS_DELETE_ITEM.status_code
                 messages.HEADER.message = messages.SUCCESS_DELETE_ITEM.message
+                delete messages.HEADER.items
 
                 return messages.HEADER
 
@@ -194,6 +197,7 @@ const deletarIdioma = async (id) => {
             }
 
         } else {
+            resultId.message += '[ID não encontrado]'
             return resultId
 
         }

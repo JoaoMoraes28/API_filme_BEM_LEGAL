@@ -119,7 +119,7 @@ const deleteClas = async (id) => {
 //Função para obter o último ID de idiomas
 const getLastId = async () => {
     try {
-        let sql = 'select id from tbl_classificacao_indicativa order by desc limit 1'
+        let sql = 'select id from tbl_classificacao_indicativa order by id desc limit 1'
 
         let result = await prisma.$queryRawUnsafe(sql)
 
