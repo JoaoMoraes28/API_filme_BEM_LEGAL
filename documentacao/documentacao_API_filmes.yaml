@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  title: Projeto do SENAI Jandira - Professor Marcel
+  title: Projeto do SENAI Jandira - João Victor Santos de Moraes
   description: |-
    API BEM LEGAL para o gerenciamento de filmes
   termsOfService: http://swagger.io/terms/
