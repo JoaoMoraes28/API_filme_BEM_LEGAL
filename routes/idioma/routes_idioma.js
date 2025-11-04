@@ -14,6 +14,7 @@ const bodyParser = require('body-parser')
 const bodyParserJSON = bodyParser.json()
 const controllerIdioma = require('../../controller/idioma/controller_idioma.js')
 
+//Endpoint para listar todos os idiomas
 routerIdioma.get('/', cors(), async (request, response) => {
     let idioma = await controllerIdioma.listarIdiomas()
 
@@ -21,6 +22,7 @@ routerIdioma.get('/', cors(), async (request, response) => {
     response.json(idioma)
 })
 
+//Endpoint para listar um idioma buscando pelo seu ID
 routerIdioma.get('/:id', cors(), async (request, response) => {
     let id = request.params.id
 
@@ -30,6 +32,7 @@ routerIdioma.get('/:id', cors(), async (request, response) => {
     response.json(idioma)
 })
 
+//Endpoint para inserir um novo idioma
 routerIdioma.post('/', cors(), bodyParserJSON, async (request, response) => {
     let bodyContent = request.body
     let contentType = request.headers["content-type"]
@@ -40,6 +43,7 @@ routerIdioma.post('/', cors(), bodyParserJSON, async (request, response) => {
     response.json(idioma)
 })
 
+//Endpoint para atualizar um idioma
 routerIdioma.put('/:id', cors(), bodyParserJSON, async (request, response) => {
     let id = request.params.id
     let bodyContent = request.body
@@ -51,6 +55,7 @@ routerIdioma.put('/:id', cors(), bodyParserJSON, async (request, response) => {
     response.json(idioma)
 })
 
+//Endpoint para deletar um idioma
 routerIdioma.delete('/:id', cors(), async (request, response) => {
     let id = request.params.id
 

@@ -14,6 +14,7 @@ const bodyParser = require('body-parser')
 const bodyParserJSON = bodyParser.json()
 const controllerClas = require('../../controller/classificacao_ind/controller_classificacao.js')
 
+//Endpoint para listar todas as classificações
 routerClas.get('/', cors(), async (request, response) => {
     let clas = await controllerClas.listarClas()
     
@@ -21,6 +22,7 @@ routerClas.get('/', cors(), async (request, response) => {
     response.json(clas)
 })
 
+//Endpoint para listar uma classificação buscando pelo seu ID
 routerClas.get('/:id', cors(), async (request, response) => {
     let id = request.params.id
 
@@ -30,6 +32,7 @@ routerClas.get('/:id', cors(), async (request, response) => {
     response.json(clas)
 })
 
+//Endpoint para inserir uma nova classificação
 routerClas.post('/', cors(), bodyParserJSON, async (request, response) => {
     let bodyContent = request.body
     let contentType = request.headers["content-type"]
@@ -40,6 +43,7 @@ routerClas.post('/', cors(), bodyParserJSON, async (request, response) => {
     response.json(clas)
 })
 
+//Endpoint para atualizar uma classificação 
 routerClas.put('/:id', cors(), bodyParserJSON, async (request, response) => {
     let id = request.params.id
     let bodyContent = request.body
@@ -51,6 +55,7 @@ routerClas.put('/:id', cors(), bodyParserJSON, async (request, response) => {
     response.json(clas)
 })
 
+//Endpoint para deletar uma classificação 
 routerClas.delete('/:id', cors(), async (request, response) => {
     let id = request.params.id
     

@@ -14,6 +14,7 @@ const bodyParser = require('body-parser')
 const bodyParserJSON = bodyParser.json()
 const controllerPais = require('../../controller/pais_origem/controller_pais.js')
 
+//Endpoint para listar todos os países
 routerPais.get('/', cors(), async (request, response) => {
     let pais = await controllerPais.listarPaises()
 
@@ -21,6 +22,7 @@ routerPais.get('/', cors(), async (request, response) => {
     response.json(pais)
 })
 
+//Endpoint para listar um país buscando pelo seu ID
 routerPais.get('/:id', cors(), async (request, response) => {
     let id = request.params.id
 
@@ -30,6 +32,7 @@ routerPais.get('/:id', cors(), async (request, response) => {
     response.json(pais)
 })
 
+//Endpoint para inserir um novo país
 routerPais.post('/', cors(), bodyParserJSON, async (request, response) => {
     let bodyContent = request.body
     let contentType = request.headers["content-type"]
@@ -40,6 +43,7 @@ routerPais.post('/', cors(), bodyParserJSON, async (request, response) => {
     response.json(pais)
 })
 
+//Endpoint para atualizar um país
 routerPais.put('/:id', cors(), bodyParserJSON, async (request, response) => {
     let id = request.params.id
     let bodyContent = request.body
@@ -51,6 +55,7 @@ routerPais.put('/:id', cors(), bodyParserJSON, async (request, response) => {
     response.json(pais)
 })
 
+//Endpoint para deletar um país
 routerPais.delete('/:id', cors(), async (request, response) => {
     let id = request.params.id
 

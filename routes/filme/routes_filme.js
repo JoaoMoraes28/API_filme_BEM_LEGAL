@@ -14,6 +14,7 @@ const bodyParser = require('body-parser')
 const bodyParserJSON = bodyParser.json()
 const controllerFilme = require('../../controller/filme/controller_filme.js')
 
+//Endpoint para listar todos os filmes
 routerFilme.get('/', async (request, response) => {
     let filmes = await controllerFilme.listarFilmes()
 
@@ -21,6 +22,7 @@ routerFilme.get('/', async (request, response) => {
     response.json(filmes)
 })
 
+//Endpoint para listar um filme buscando pelo seu ID
 routerFilme.get('/:id', cors(), async (request, response) => {
     let id = request.params.id
 
@@ -29,6 +31,7 @@ routerFilme.get('/:id', cors(), async (request, response) => {
     response.json(filme)
 })
 
+//Endpoint para inserir um novo filme
 routerFilme.post('/', cors(), bodyParserJSON, async (request, response) => {
     //Recebendo os dados da requisições (Se você utilizar o body parser, é obrigatório ter no endpoint)
     let dadosBody = request.body
@@ -42,6 +45,7 @@ routerFilme.post('/', cors(), bodyParserJSON, async (request, response) => {
     response.json(filme)
 })
 
+//Endpoint para atualizar um filme
 routerFilme.put('/:id', cors(), bodyParserJSON, async (request, response) => {
     // ID do filme via parametro
     let id = request.params.id
@@ -57,6 +61,7 @@ routerFilme.put('/:id', cors(), bodyParserJSON, async (request, response) => {
 
 })
 
+//Endpoint para deletar um filme
 routerFilme.delete('/:id', cors(), async (request, response) => {
     let id = request.params.id
 

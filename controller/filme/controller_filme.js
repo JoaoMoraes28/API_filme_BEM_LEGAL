@@ -22,6 +22,7 @@ const listarFilmes = async () => {
             if (resultFilmes.length > 0) {
                 messages.HEADER.status = messages.SUCCESS_REQUEST.status
                 messages.HEADER.status_code = messages.SUCCESS_REQUEST.status_code
+                messages.HEADER.message = messages.SUCCESS_REQUEST.message
                 messages.HEADER.items.filmes = resultFilmes
 
                 return messages.HEADER
@@ -54,6 +55,7 @@ const buscarFilmeId = async (id) => {
                 if (resultFilme.length > 0) {
                     messages.HEADER.status = messages.SUCCESS_REQUEST.status
                     messages.HEADER.status_code = messages.SUCCESS_REQUEST.status_code
+                    messages.HEADER.message = messages.SUCCESS_REQUEST.message
                     messages.HEADER.items.filme = resultFilme
 
                     return messages.HEADER

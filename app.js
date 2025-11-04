@@ -29,14 +29,19 @@ app.use((request, response, next) => {
 })
 
 //Direcionamento para o arquivo Routes
+//Rotas para o arquivos de filmes
 app.use('/v1/locadora/filme', routerFilmes)
 
+//Rotas para o arquivos de gêneros
 app.use('/v1/locadora/genero', routerGeneros)
 
+//Rotas para o arquivos de classificação indicativa
 app.use('/v1/locadora/classificacao_indicativa', routerClassificacao)
 
+//Rotas para o arquivos de países
 app.use('/v1/locadora/paises', routerPaises)
 
+//Rotas para o arquivos de idiomas
 app.use('/v1/locadora/idioma', routerIdioma)
 
 app.listen(PORT, () => {

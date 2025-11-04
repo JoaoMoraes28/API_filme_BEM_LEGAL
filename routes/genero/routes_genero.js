@@ -14,6 +14,7 @@ const bodyParser = require('body-parser')
 const bodyParserJSON = bodyParser.json()
 const controllerGenero = require('../../controller/genero/controller.genero.js')
 
+//Endpoint para listar todos os gêneros
 routerGenero.get('/', cors(), async (request, response) => {
     let generos = await controllerGenero.listarGeneros()
 
@@ -21,6 +22,7 @@ routerGenero.get('/', cors(), async (request, response) => {
     response.json(generos)
 })
 
+//Endpoint para listar um gênero buscando pelo seu ID
 routerGenero.get('/:id', cors(), async (request, response) => {
     let id = request.params.id
     let genero = await controllerGenero.selecionarGeneroId(id)
@@ -29,6 +31,7 @@ routerGenero.get('/:id', cors(), async (request, response) => {
     response.json(genero)
 })
 
+//Endpoint para inserir um novo gênero
 routerGenero.post('/', cors(), bodyParserJSON, async (request, response) => {
     let dadosBody = request.body
     let contentType = request.headers["content-type"]
@@ -39,6 +42,7 @@ routerGenero.post('/', cors(), bodyParserJSON, async (request, response) => {
     response.json(genero)
 })
 
+//Endpoint para atualizar um gênero
 routerGenero.put('/:id', cors(), bodyParserJSON, async (request, response) => {
     let id = request.params.id
     let dadosBody = request.body
@@ -50,6 +54,7 @@ routerGenero.put('/:id', cors(), bodyParserJSON, async (request, response) => {
     response.json(genero)
 })
 
+//Endpoint para deletar um gênero
 routerGenero.delete('/:id', cors(), async (request, response) => {
     let id = request.params.id
 

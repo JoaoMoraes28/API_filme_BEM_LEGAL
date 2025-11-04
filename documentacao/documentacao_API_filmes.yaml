@@ -1,0 +1,720 @@
+openapi: 3.0.3
+info:
+  title: Projeto do SENAI Jandira - Professor Marcel
+  description: |-
+   API BEM LEGAL para o gerenciamento de filmes
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: joaovictor.moraes2728@gmail.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+externalDocs:
+  description: Find out more about Swagger
+  url: http://swagger.io
+servers:
+  - url: http://
+paths:
+  /v1/locadora/filme:
+    post:
+      tags:
+        - Filmes
+      summary: Adiciona um novo filme
+      description: Adiciona um novo filme
+      requestBody:
+        description: JSON contendo os dados do novo filme deve ser inserido no sistema
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/filmePost'
+        required: true
+      responses:
+        '201':
+          description: Successful operation
+        '400':
+          description: Invalid input
+    get:
+      tags:
+        - Filmes
+      summary: Lista todos os filmes
+      description: Listagem de todos os filmes registrados no sistema
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/filmeGet'          
+           
+        '404':
+          description: Not Found
+  /v1/locadora/filme/{id}:
+    get:
+      tags:
+        - Filmes
+      summary: Lista um filme 
+      description: Retorna um filme pelo ID
+      parameters:
+        - name: id
+          in: path
+          description: ID do filme para retorno
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/filmeGet'          
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Movie not found
+    put:
+      tags:
+        - Filmes
+      summary: Atualiza um filme
+      description: Atualiza um filme pelo seu ID
+      parameters:
+        - name: id
+          in: path
+          description: ID do filme para retorno
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Dados de atualização para o filme
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/filmePut'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Movie not found
+       
+    delete:
+      tags:
+        - Filmes
+      summary: Deleta um filme
+      description: Excluir um filme
+      parameters:
+        - name: id
+          in: path
+          description: ID do filme para retorno
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Movie not found
+    
+    
+  /v1/locadora/idioma:
+    post:
+      tags:
+        - Idioma
+      summary: Adiciona um novo idioma
+      description: Adiciona um novo idioma
+      requestBody:
+        description: JSON contendo os dados do novo idioma deve ser inserido no sistema
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/idiomaPost'
+        required: true
+      responses:
+        '201':
+          description: Successful operation
+        '400':
+          description: Invalid input
+    get:
+      tags:
+        - Idioma
+      summary: Lista todos os idiomas
+      description: Listagem de todos os idiomas registrados no sistema
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/idiomaGet'          
+           
+        '404':
+          description: Not Found
+  /v1/locadora/idioma/{id}:
+    get:
+      tags:
+        - Idioma
+      summary: Lista um idioma 
+      description: Retorna um idioma pelo ID
+      parameters:
+        - name: id
+          in: path
+          description: ID do idioma para retorno
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/idiomaGet'          
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Language not found
+    put:
+      tags:
+        - Idioma
+      summary: Atualiza um idioma
+      description: Atualiza um idioma pelo seu ID
+      parameters:
+        - name: id
+          in: path
+          description: ID do idioma para retorno
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Dados de atualização para o idioma
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/idiomaPost'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Language not found
+       
+    delete:
+      tags:
+        - Idioma
+      summary: Deleta um idioma
+      description: Excluir um idioma
+      parameters:
+        - name: id
+          in: path
+          description: ID do idioma para retorno
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Language not found
+          
+  /v1/locadora/genero:
+    post:
+      tags:
+        - Genero
+      summary: Adiciona um novo gênero
+      description: Adiciona um novo gênero
+      requestBody:
+        description: JSON contendo os dados do novo gênero deve ser inserido no sistema
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/generoPost'
+        required: true
+      responses:
+        '201':
+          description: Successful operation
+        '400':
+          description: Invalid input
+    get:
+      tags:
+        - Genero
+      summary: Lista todos os gêneros
+      description: Listagem de todos os gêneros registrados no sistema
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/generoGet'          
+           
+        '404':
+          description: Not Found
+  /v1/locadora/genero/{id}:
+    get:
+      tags:
+        - Genero
+      summary: Lista um gênero 
+      description: Retorna um gênero pelo ID
+      parameters:
+        - name: id
+          in: path
+          description: ID do gênero para retorno
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/generoGet'          
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Gender not found
+    put:
+      tags:
+        - Genero
+      summary: Atualiza um gênero
+      description: Atualiza um gênero pelo seu ID
+      parameters:
+        - name: id
+          in: path
+          description: ID do gênero para retorno
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Dados de atualização para o gênero
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/generoPost'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Gender not found
+       
+    delete:
+      tags:
+        - Genero
+      summary: Deleta um gênero
+      description: Excluir um gênero
+      parameters:
+        - name: id
+          in: path
+          description: ID do gênero para retorno
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Gender not found  
+          
+  /v1/locadora/classificacao_indicativa:
+    post:
+      tags:
+        - Classificação Indicativa
+      summary: Adiciona uma nova classificação indicativa
+      description: Adiciona uma nova classificação indicativa
+      requestBody:
+        description: JSON contendo os dados da nova classificação indicativa deve ser inserida no sistema
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/clasPost'
+        required: true
+      responses:
+        '201':
+          description: Successful operation
+        '400':
+          description: Invalid input
+    get:
+      tags:
+        - Classificação Indicativa
+      summary: Lista todas as classificação indicativa
+      description: Listagem de todas as classificação indicativa registradas no sistema
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/clasGet'          
+           
+        '404':
+          description: Not Found
+  /v1/locadora/classificacao_indicativa/{id}:
+    get:
+      tags:
+        - Classificação Indicativa
+      summary: Lista uma classificação indicativa
+      description: Retorna uma classificação indicativa pelo ID
+      parameters:
+        - name: id
+          in: path
+          description: ID da classificação indicativa para retorno
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/clasGet'          
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Classification not found
+    put:
+      tags:
+        - Classificação Indicativa
+      summary: Atualiza uma classificação indicativa
+      description: Atualiza uma classificação indicativa pelo seu ID
+      parameters:
+        - name: id
+          in: path
+          description: ID da classificação indicativa para retorno
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Dados de atualização para a classificação indicativa
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/clasPost'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Classification not found
+       
+    delete:
+      tags:
+        - Classificação Indicativa
+      summary: Deleta uma classificação indicativa
+      description: Excluir uma classificação indicativa
+      parameters:
+        - name: id
+          in: path
+          description: ID da classificação indicativa para retorno
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Classification not found        
+      
+  /v1/locadora/paises:
+    post:
+      tags:
+        - País de Origem
+      summary: Adiciona um país
+      description: Adiciona um país
+      requestBody:
+        description: JSON contendo os dados do país deve ser inserido no sistema
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/paisPost'
+        required: true
+      responses:
+        '201':
+          description: Successful operation
+        '400':
+          description: Invalid input
+    get:
+      tags:
+        - País de Origem
+      summary: Lista todos os países
+      description: Listagem de todos os países registrados no sistema
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/paisGet'          
+           
+        '404':
+          description: Not Found
+  /v1/locadora/paises/{id}:
+    get:
+      tags:
+        - País de Origem
+      summary: Lista um país
+      description: Retorna um país pelo ID
+      parameters:
+        - name: id
+          in: path
+          description: ID do país para retorno
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/paisGet'          
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Country not found
+    put:
+      tags:
+        - País de Origem
+      summary: Atualiza um país
+      description: Atualiza um país pelo seu ID
+      parameters:
+        - name: id
+          in: path
+          description: ID do país para retorno
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Dados de atualização para o país
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/paisPost'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Country not found
+       
+    delete:
+      tags:
+        - País de Origem
+      summary: Deleta um país
+      description: Excluir um país
+      parameters:
+        - name: id
+          in: path
+          description: ID do país para retorno
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Country not found                
+          
+          
+components:
+  schemas:
+    filmePost:
+      required:
+        - nome
+        - data_lancamento
+        - duracao
+        - orcamento
+        - capa
+      type: object
+      properties:
+        nome:
+          type: string
+        sinopse:
+          type: string
+        data_lancamento:
+          type: string
+          format: date
+        duracao:
+          type: string
+        orcamento:
+          type: number
+          format: double
+        trailer:
+          type: string
+        capa:
+          type: string
+          
+    filmeGet:
+      type: object
+      properties:
+        id:
+          type: integer
+        nome:
+          type: string
+        sinopse:
+          type: string
+        data_lancamento:
+          type: string
+          format: date
+        duracao:
+          type: string
+        orcamento:
+          type: number
+          format: double
+        trailer:
+          type: string
+        capa:
+          type: string
+          
+    filmePut:
+      required:
+        - nome
+        - data_lancamento
+        - duracao
+        - orcamento
+        - capa
+      type: object
+      properties:
+        id:
+          type: integer
+        nome:
+          type: string
+        sinopse:
+          type: string
+        data_lancamento:
+          type: string
+          format: date
+        duracao:
+          type: string
+        orcamento:
+          type: number
+          format: double
+        trailer:
+          type: string
+        capa:
+          type: string
+          
+    idiomaGet:
+      type: object
+      properties:
+        id:
+          type: integer
+        idioma:
+          type: string
+          
+    idiomaPost:
+      required:
+        - idioma
+      type: object
+      properties:
+        idioma:
+          type: string      
+          
+          
+    generoGet:
+      type: object
+      properties:
+        id:
+          type: integer
+        genero:
+          type: string
+          
+    generoPost:
+      required:
+        - genero
+      type: object
+      properties:
+        genero:
+          type: string  
+          
+    paisGet:
+      type: object
+      properties:
+        id:
+          type: integer
+        pais:
+          type: string
+    
+    paisPost:
+      required:
+        - pais
+      type: object
+      properties:
+        id:
+          type: integer
+        pais:
+          type: string
+          
+    clasGet:
+      type: object
+      properties:
+        id:
+          type: integer
+        classificacao:
+          type: string
+          
+    clasPost:
+      required:
+        - classificacao
+      type: object
+      properties:
+        id:
+          type: integer
+        classificacao:
+          type: string      
+          
+  requestBodies:
+    filme:
+      description: Objeto que deve ser enviado no Body das requisicoes
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/filmePost'
+
