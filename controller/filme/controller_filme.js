@@ -4,11 +4,13 @@
 * Objetivo: Arquivo responsavel pela manipulacao de dado entre o app e a model para o CRUD de filmes
 * Data: 07/10/2025
 * Autor: Joao Victor Santos de Moraes
-* Versao: 1.0 
+* Versao: 1.0 (CRUD básico do filme, sem as relações com outras tabelas)
+* Versao: 1.1 (CRUD do filme com relacionamento com a tabela genero)
 ***************************************************************************************************/
 
 const filmeDAO = require('../../model/DAO/filme.js')
 const DEFAULT_MESSAGES = require('../modulo/config_messages.js')
+const controller_filme_genero = require('./controller_filme_genero.js')
 
 //Retorna uma lista de todos os filmes
 const listarFilmes = async () => {
@@ -99,6 +101,11 @@ const inserirFilme = async (filme, contentType) => {
                     let id = await filmeDAO.getSelectLastId()
 
                     if (id) {
+                        //Processar a inserção dos dados na tabela de relação entre file e genero
+                        filme.generos.forEach((genero) => {
+                            let filmeGenero = [id_filme: id, id_genero: genero.id]
+                        });
+
                         filme.id = id
                         messages.HEADER.items.filme = filme
                         messages.HEADER.status = messages.SUCCESS_CREATED_ITEM.status
