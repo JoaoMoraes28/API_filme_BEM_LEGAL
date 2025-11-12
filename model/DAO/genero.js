@@ -134,7 +134,6 @@ const getLastId = async () => {
         }
 
     } catch (error) {
-        console.log(error)
         return false
 
     }

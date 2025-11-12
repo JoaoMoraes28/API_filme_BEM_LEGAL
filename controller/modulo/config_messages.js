@@ -46,6 +46,12 @@ const SUCCESS_DELETE_ITEM = {
     message: "Item deletado com sucessos"
 }
 
+const SUCCESS_PARTIAL_CONTENT = {
+    status: true,
+    status_code: 206,
+    message: "Item econtrado, mas apenas apenas parte de seu conteúdo esta disponível para visualização!"
+}
+
 /* MENSAGENS DE ERRO */
 const ERROR_NOT_FOUND = {
     status: false,
@@ -77,6 +83,11 @@ const ERROR_CONTENT_TYPE = {
     message: "Não foi possível processar a requisição pois o tipo de dados enviados no corpo deve ser JSON"
 }
 
+const ERROR_RELATION_INSERT = {
+    status: false,
+    status_code: 500,
+    message: "A requisição do item principal foi processada com suceso, porém houveram problemas ao inserir dados na tabela de relação"
+}
 
 module.exports = {
     HEADER,
@@ -88,5 +99,7 @@ module.exports = {
     SUCCESS_CREATED_ITEM,
     ERROR_CONTENT_TYPE,
     SUCCESS_UPDATED_ITEM,
-    SUCCESS_DELETE_ITEM
+    SUCCESS_DELETE_ITEM,
+    ERROR_RELATION_INSERT,
+    SUCCESS_PARTIAL_CONTENT
 }

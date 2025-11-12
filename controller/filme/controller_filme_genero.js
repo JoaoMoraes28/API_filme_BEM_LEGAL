@@ -8,7 +8,7 @@
 *****************************************************************************************************************************/
 
 const filmeGeneroDAO = require('../../model/DAO/filme_genero.js')
-
+const controller_genero = require('../../controller/genero/controller.genero.js')
 const DEFAULT_MESSAGES = require('../modulo/config_messages.js')
 
 //Retorna uma lista de todos os filme_genero
@@ -136,7 +136,7 @@ const selecionarFilmesIdGenero = async (idGenero) => {
                     messages.HEADER.items.genero = filmeGenero
 
                     return messages.HEADER
-                    
+
                 } else {
                     return messages.ERROR_NOT_FOUND
 
@@ -166,11 +166,12 @@ const inserirFilmeGeneros = async (filmeGenero, contentType) => {
     try {
         if (String(contentType).toUpperCase() == 'APPLICATION/JSON') {
 
-            if (filmeGenero.id_filme == '' || filmeGenero.id_filme == null || filmeGenero.id_filme == undefined || filmeGenero.id_genero == '' || filmeGenero.id_genero == null || filmeGenero.id_genero == undefined) {
-                return messages.ERROR_REQUIRED_FIELDS += '[ID inválido]'
+            if (filmeGenero.id_filme == '' || filmeGenero.id_filme == null || filmeGenero.id_filme == undefined || filmeGenero.id == '' || filmeGenero.id == null || filmeGenero.id == undefined) {
+                messages.ERROR_REQUIRED_FIELDS.message += '[ID inválido]'
+                return messages.ERROR_REQUIRED_FIELDS
 
             } else {
-                let resultFilmeGenero = await filmeGeneroDAO.setInsertMovieGenres(genero)
+                let resultFilmeGenero = await filmeGeneroDAO.setInsertMovieGenres(filmeGenero)
 
                 if (resultFilmeGenero) {
                     let id = await filmeGeneroDAO.getSelectLastId()
@@ -180,7 +181,7 @@ const inserirFilmeGeneros = async (filmeGenero, contentType) => {
                         messages.HEADER.status_code = messages.SUCCESS_CREATED_ITEM.status_code
                         messages.HEADER.message = messages.SUCCESS_CREATED_ITEM.message
                         filmeGenero.id = id
-                        messages.HEADER.items.genero = genero
+                        messages.HEADER.items.genero = resultFilmeGenero
 
                         return messages.HEADER
 
@@ -213,17 +214,17 @@ const atualizarFilmeGeneros = async (id, filmeGenero, contentType) => {
 
     try {
         if (String(contentType).toUpperCase() == 'APPLICATION/JSON') {
-            if (filmeGenero.id_filme == '' || filmeGenero.id_filme == null || filmeGenero.id_filme == undefined || filmeGenero.id_genero == '' || filmeGenero.id_genero == null || filmeGenero.id_genero == undefined) {
+            if (id == '' || id == null || id == undefined || filmeGenero.id == '' || filmeGenero.id == null || filmeGenero.id == undefined) {
                 return messages.ERROR_REQUIRED_FIELDS += '[ID inválido]'
 
             } else {
-                let resultId = await selecionarFilmeGenerosId(id)
+                let resultId = await controller_genero.selecionarGeneroId(filmeGenero.id)
 
                 if (resultId.status_code == 200) {
-                    filmeGenero.id = id
-                    let filmeGeneroAtualizado = filmeGeneroDAO.setUpdateMovieGenres(filmeGenero)
+                    filmeGenero.id_filme = id
+                    let filmeGeneroAtualizadoInsert = await filmeGeneroDAO.setInsertMovieGenres(filmeGenero)
 
-                    if (filmeGeneroAtualizado) {
+                    if (filmeGeneroAtualizadoInsert.status_code == 200) {
                         messages.HEADER.status = messages.SUCCESS_UPDATED_ITEM.status
                         messages.HEADER.status_code = messages.SUCCESS_UPDATED_ITEM.status_code
                         messages.HEADER.message = messages.SUCCESS_UPDATED_ITEM.message
@@ -235,6 +236,8 @@ const atualizarFilmeGeneros = async (id, filmeGenero, contentType) => {
                         return messages.ERROR_INTERNAL_SERVER_MODEL
 
                     }
+
+
 
                 } else {
                     resultId.message += '[ID não encontrado]'

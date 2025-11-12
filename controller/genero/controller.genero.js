@@ -36,7 +36,6 @@ const listarGeneros = async () => {
         }
 
     } catch (error) {
-        console.log(error)
         return messages.ERROR_INTERNAL_SERVER_CONTROLLER
     }
 

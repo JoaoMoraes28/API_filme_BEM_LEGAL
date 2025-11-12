@@ -57,7 +57,7 @@ async function getSelectByIdMovieGenres(id) {
 //Retorna os generos de um filme filtrando pelo ID no banco de dados
 async function getSelectGenresByIdMovie(idMovie) {
     try {
-        let sql = `SELECT tbl_genero.id, tbl_genero.nome 
+        let sql = `SELECT tbl_genero.id, tbl_genero.genero 
                         from tbl_filme 
                             JOIN tbl_filme_genero 
                                 on tbl_filme.id = tbl_filme_genero.id_filme
@@ -111,9 +111,10 @@ async function getSelectMoviesByIdGenre(idGenre) {
 //Insere um filme_genero novo no banco de dados
 async function setInsertMovieGenres(filmeGenero) {
     try {
-        let sql = `insert into tbl_filme (id_filme, id_genero)
+
+        let sql = `insert into tbl_filme_genero (id_filme, id_genero)
                     VALUES (${filmeGenero.id_filme},
-                            ${filmeGenero.id_genero}
+                            ${filmeGenero.id}
                             );`
 
         let result = await prisma.$executeRawUnsafe(sql)
@@ -155,16 +156,14 @@ const getSelectLastId = async () => {
 }
 
 //Altera um filme_genero no banco de dados
-async function setUpdateMovieGenres(filmeGenero) {
+async function deleteGenresIdFilme(id_filme) {
     try {
-        let sql = `update tbl_filme_genero set 
-        id_filme = ${filmeGenero.id_filme},
-        id_genero = ${filmeGenero.id_genero}
+        let sql = `delete from tbl_filme_genero
         
-        WHERE id = ${filmeGenero.id}`
+        WHERE id_filme = ${id_filme}`
 
         let result = await prisma.$executeRawUnsafe(sql)
-
+        
         if (result) {
             return true
 
@@ -206,7 +205,7 @@ module.exports = {
     getSelectByIdMovieGenres,
     getSelectLastId,
     setInsertMovieGenres,
-    setUpdateMovieGenres,
+    deleteGenresIdFilme,
     setDeleteMovieGenres,
     getSelectMoviesByIdGenre,
     getSelectGenresByIdMovie
