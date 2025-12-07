@@ -45,7 +45,7 @@ async function getSelectAllMovies() {
         let sql = "select * from tbl_filme order by id desc"
         //Encaminha para o banco de dados o script SQL
         let result = await prisma.$queryRawUnsafe(sql)
-
+        
         if (result) {
             return result
         } else {
