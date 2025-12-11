@@ -16,22 +16,22 @@ CREATE TABLE tbl_filme (
 CREATE TABLE tbl_pais_origem (
     id int PRIMARY KEY auto_increment not null,
     pais varchar(50) not null
-)
+);
 
-CREATE TABLE tbl_idoma (
+CREATE TABLE tbl_idioma (
     id int PRIMARY KEY auto_increment not null,
     idioma varchar(50) not null
-)
+);
 
 CREATE TABLE tbl_genero (
     id int PRIMARY KEY auto_increment not null,
     genero varchar(50) not null
-)
+);
 
 CREATE TABLE tbl_classificacao_indicativa (
     id int PRIMARY KEY auto_increment not null,
     classificacao varchar(50) not null
-)
+);
 
 CREATE TABLE tbl_ator (
     id int PRIMARY KEY auto_increment not null,
@@ -42,7 +42,7 @@ CREATE TABLE tbl_ator (
 
     CONSTRAINT fk_ator_pais
     FOREIGN KEY (nacionalidade) REFERENCES tbl_pais_origem(id)
-)
+);
 
 CREATE TABLE tbl_diretor (
     id int PRIMARY KEY auto_increment not null,
@@ -53,7 +53,7 @@ CREATE TABLE tbl_diretor (
 
     CONSTRAINT fk_diretor_pais
     FOREIGN KEY (nacionalidade) REFERENCES tbl_pais_origem(id)
-)
+);
 
 CREATE TABLE tbl_filme_genero (
     id int PRIMARY KEY auto_increment not null,
@@ -65,7 +65,7 @@ CREATE TABLE tbl_filme_genero (
 
     CONSTRAINT fk_genero_filme
     FOREIGN KEY (id_genero) REFERENCES tbl_genero(id)
-)
+);
 
 CREATE TABLE tbl_ator_filme (
     id int PRIMARY KEY auto_increment not null,
@@ -77,4 +77,4 @@ CREATE TABLE tbl_ator_filme (
 
     CONSTRAINT fk_ator_filme
     FOREIGN KEY (id_ator) REFERENCES tbl_ator(id)
-)
+);

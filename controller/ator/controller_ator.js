@@ -16,25 +16,27 @@ const listarAtores = async () => {
 
     try {
         let resultAtor = await atorDAO.getSelectAllActor()
-        
+
         if (resultAtor) {
             if (resultAtor.length > 0) {
-                for (let ator of resultAtor) {
-                    let pais = paisDAO.listarPaisId(ator.nacionalidade)
-                    
+                let resultAtorFilter = resultAtor.filter(ator => ator.ativo == 1)
+
+                for (let ator of resultAtorFilter) {
+                    let pais = await paisDAO.listarPaisId(ator.nacionalidade)
+
                     if (pais.status_code == 200) {
-                        ator.nacionalidade = pais
-                                        
+                        ator.nacionalidade = pais.items.pais[0].pais
+
                     } else {
                         ator.nacionalidade = 'País não cadastrado'
 
                     }
                 }
-                
+
                 messages.HEADER.status = messages.SUCCESS_REQUEST.status
                 messages.HEADER.status_code = messages.SUCCESS_REQUEST.status_code
                 messages.HEADER.message = messages.SUCCESS_REQUEST.message
-                messages.HEADER.items.atores = resultAtor
+                messages.HEADER.items.atores = resultAtorFilter
 
                 return messages.HEADER
 
@@ -64,14 +66,14 @@ const listarAtorId = async (id) => {
             let resultAtor = await atorDAO.getSelectById(id)
 
             if (resultAtor) {
-                if (resultAtor.length > 0) {
-                    let pais = paisDAO.listarPaisId(resultAtor.nacionalidade)
-
+                let resultAtorFilter = resultAtor.filter(ator => ator.ativo == 1)
+                if (resultAtorFilter.length > 0) {
+                    let pais = await paisDAO.listarPaisId(resultAtor[0].nacionalidade)
                     if (pais.status_code == 200) {
                         messages.HEADER.status = messages.SUCCESS_REQUEST.status
                         messages.HEADER.status_code = messages.SUCCESS_REQUEST.status_code
                         messages.HEADER.message = messages.SUCCESS_REQUEST.message
-                        resultAtor.nacionalidade = pais.pais
+                        resultAtor.nacionalidade = pais.items.pais[0].pais
                         messages.HEADER.items.ator = resultAtor
 
                         return messages.HEADER
@@ -102,7 +104,7 @@ const inserirAtor = async (ator, contentType) => {
 
     try {
         if (String(contentType).toUpperCase() == 'APPLICATION/JSON') {
-            let resultValidar = validarDadosAtor(ator)
+            let resultValidar = await validarDadosAtor(ator)
 
             if (!resultValidar) {
                 return resultValidar
@@ -113,13 +115,13 @@ const inserirAtor = async (ator, contentType) => {
                 if (resultAtor) {
                     let id = await atorDAO.getSelectLastId()
                     if (id) {
-                        let pais = paisDAO.listarPaisId(ator.nacionalidade)
+                        let pais = await paisDAO.listarPaisId(ator.nacionalidade)
 
                         if (pais.status_code == 200) {
                             messages.HEADER.status = messages.SUCCESS_CREATED_ITEM.status
                             messages.HEADER.status_code = messages.SUCCESS_CREATED_ITEM.status_code
                             messages.HEADER.message = messages.SUCCESS_CREATED_ITEM.message
-                            ator.nacionalidade = pais
+                            ator.nacionalidade = pais.items.pais[0].pais
                             ator.id = id
                             messages.HEADER.items.ator = ator
 
@@ -128,7 +130,7 @@ const inserirAtor = async (ator, contentType) => {
                             messages.ERROR_NOT_FOUND.message += '[País não encontrado]'
                             return messages.ERROR_NOT_FOUND
                         }
-                        
+
                     } else {
                         return messages.ERROR_INTERNAL_SERVER_MODEL
 
@@ -165,7 +167,6 @@ const atualizarAtor = async (id, ator, contentType) => {
 
             } else {
                 let resultId = await listarAtorId(id)
-
                 if (resultId.status_code == 200) {
                     let resultAtor = await atorDAO.updateActor(id, ator)
 
@@ -242,7 +243,7 @@ const validarDadosAtor = async (ator) => {
         messages.ERROR_REQUIRED_FIELDS.message += ' [Nome incorreto]'
         return messages.ERROR_REQUIRED_FIELDS
 
-    } else if (ator.data_nascimento = '' || ator.data_nascimento == undefined || ator.data_nascimento == null || ator.data_nascimento instanceof Date) {
+    } else if (ator.data_nascimento == '' || ator.data_nascimento == undefined || ator.data_nascimento == null || ator.data_nascimento instanceof Date) {
         messages.ERROR_REQUIRED_FIELDS.message += ' [Data Nascimento incorreta]'
         return messages.ERROR_REQUIRED_FIELDS
 
@@ -250,12 +251,12 @@ const validarDadosAtor = async (ator) => {
         messages.ERROR_REQUIRED_FIELDS.message += ' [Idade incorreta]'
         return messages.ERROR_REQUIRED_FIELDS
 
-    } else if (ator.nacionalidade = '' || ator.nacionalidade == undefined || ator.nacionalidade == null || typeof (ator.nacionalidade) != 'number') {
+    } else if (ator.nacionalidade == '' || ator.nacionalidade == undefined || ator.nacionalidade == null || typeof (ator.nacionalidade) != 'number') {
         messages.ERROR_REQUIRED_FIELDS.message += ' [Nacionalidade incorreta]'
         return messages.ERROR_REQUIRED_FIELDS
 
     } else {
-        return false
+        return true
 
     }
 }

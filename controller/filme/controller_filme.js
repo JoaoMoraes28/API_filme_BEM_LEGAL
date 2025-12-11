@@ -48,13 +48,13 @@ const listarFilmes = async () => {
                         }
 
                         let resultAtorFilme = await controller_ator_filme.selecionarAtoresIdFilme(filme.id)
-
                         if (resultAtorFilme) {
-                            if (resultGenerosFilme.status_code == 200) {
+                            console.log(resultAtorFilme)
+                            if (resultAtorFilme.status_code == 200) {
                                 filme.elenco = resultAtorFilme.items.elenco
 
                             } else {
-                                filme.generos = 'Nenhum ator associado a este Filme'
+                                filme.elenco = 'Nenhum ator associado a este Filme'
 
                             }
                         } else {
@@ -82,6 +82,7 @@ const listarFilmes = async () => {
         }
 
     } catch (error) {
+        console.log(error)
         return messages.ERROR_INTERNAL_SERVER_CONTROLLER
     }
 
@@ -106,20 +107,22 @@ const buscarFilmeId = async (id) => {
                             let resultAtorFilme = await controller_ator_filme.selecionarAtoresIdFilme(id)
 
                             if (resultAtorFilme) {
-                                if (resultAtorFilme.status_code == 200) {
-                                    resultFilme[0].generos = resultGenerosFilmes.items.genero
-                                    messages.HEADER.status = messages.SUCCESS_REQUEST.status
-                                    messages.HEADER.status_code = messages.SUCCESS_REQUEST.status_code
-                                    messages.HEADER.message = messages.SUCCESS_REQUEST.message
-                                    messages.HEADER.items.filme = resultFilme
-
-                                    return messages.HEADER
+                                if (resultAtorFilme.status_code == 404) {
+                                    resultFilme[0].elenco = 'Nenhum ator associado com este elenco'
 
                                 } else {
-                                    messages.SUCCESS_PARTIAL_CONTENT.message += '[Não foram encontrados atores para este filme]'
-                                    return messages.SUCCESS_PARTIAL_CONTENT
+                                    resultFilme[0].elenco = resultAtorFilme.items.elenco
 
                                 }
+
+                                resultFilme[0].generos = resultGenerosFilmes.items.genero
+                                messages.HEADER.status = messages.SUCCESS_REQUEST.status
+                                messages.HEADER.status_code = messages.SUCCESS_REQUEST.status_code
+                                messages.HEADER.message = messages.SUCCESS_REQUEST.message
+                                messages.HEADER.items.filme = resultFilme
+
+                                return messages.HEADER
+
                             } else {
                                 messages.ERROR_INTERNAL_SERVER_CONTROLLER.message += '[CONTROLLER ATOR_FILME]'
                                 return messages.ERROR_INTERNAL_SERVER_CONTROLLER
@@ -175,10 +178,9 @@ const inserirFilme = async (filme, contentType) => {
 
                 if (resultFilme) {
                     let id = await filmeDAO.getSelectLastId()
-
                     if (id) {
                         //Processar a inserção dos dados na tabela de relação entre file e genero
-                        for (let genero of filme.generos) {
+                        for (let genero of filme.genero) {
                             //Cria o JSON com o ID do filme e o ID do gênero
                             let filmeGenero = {
                                 id_filme: id,
@@ -196,12 +198,11 @@ const inserirFilme = async (filme, contentType) => {
 
                         for (let ator of filme.elenco) {
                             let atorFilme = {
-                                id_filme: filme.id,
+                                id_filme: id,
                                 id_ator: ator.id_ator
                             }
 
                             let resultAtorFilme = await controller_ator_filme.inserirAtorFilme(atorFilme, contentType)
-
                             if (resultAtorFilme.status_code != 201) {
                                 return messages.ERROR_RELATION_INSERT
                             }

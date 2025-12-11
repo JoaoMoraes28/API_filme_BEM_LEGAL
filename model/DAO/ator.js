@@ -56,9 +56,9 @@ async function setInsertActor(ator) {
     try {
 
         let sql = `INSERT INTO tbl_ator(nome, data_nascimento, nacionalidade, idade)
-                    VALUES('${ator.nome}'
-                            '${ator.data_nascimento}'
-                            ${ator.nacionalidade}
+                    VALUES('${ator.nome}',
+                            '${ator.data_nascimento}',
+                            ${ator.nacionalidade},
                             ${ator.idade}
                     )`
 
@@ -102,9 +102,9 @@ const getSelectLastId = async () => {
 const updateActor = async (id, ator) => {
     try {
         let sql = `update tbl_ator set
-        nome = '${ator.nome}'
-        data_nascimento = '${ator.data_nascimento}'
-        nacionalidade = ${ator.id_pais}
+        nome = '${ator.nome}',
+        data_nascimento = '${ator.data_nascimento}',
+        nacionalidade = ${ator.nacionalidade},
         idade = ${ator.idade}
         
         where id = ${id}`
@@ -126,8 +126,9 @@ const updateActor = async (id, ator) => {
 
 async function deleteActor(id_ator) {
     try {
-        let sql = `update from tbl_ator set
-                    ativo = false`
+        let sql = `update tbl_ator set
+                    ativo = false
+                    WHERE id = ${id_ator}`
 
         let result = await prisma.$executeRawUnsafe(sql)
 

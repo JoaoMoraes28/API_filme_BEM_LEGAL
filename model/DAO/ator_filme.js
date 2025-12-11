@@ -80,13 +80,9 @@ async function getSelectMovieByIdActor(idActor) {
 
 async function getSelectActorByIdMovie(idMovie) {
     try {
-        let sql = `SELECT tbl_filme.id, tbl_filme.nome 
-                        from tbl_filme 
-                            JOIN tbl_filme_genero 
-                                on tbl_filme.id = tbl_filme_genero.id_filme
-                            JOIN tbl_genero 
-                                on tbl_genero.id = tbl_filme_genero.id_genero
-                        WHERE tbl_genero.id = ${idGenre}`
+        let sql = `select tbl_ator.nome, tbl_ator_filme.id_ator FROM tbl_ator_filme
+                    INNER JOIN tbl_ator ON tbl_ator.id = tbl_ator_filme.id_ator
+                    WHERE tbl_ator_filme.id_filme = ${idMovie}`
 
         let result = await prisma.$queryRawUnsafe(sql)
 
@@ -115,7 +111,7 @@ async function setInsertActorMovie(atorFilme) {
         let result = await prisma.$executeRawUnsafe(sql)
 
         if (result) {
-            return true
+            return result
 
         } else {
             return false
@@ -156,7 +152,7 @@ async function deleteActorIdMovie(id_filme) {
         WHERE id_filme = ${id_filme}`
 
         let result = await prisma.$executeRawUnsafe(sql)
-        
+
         if (result) {
             return true
 

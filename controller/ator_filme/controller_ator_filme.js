@@ -161,22 +161,20 @@ const inserirAtorFilme = async (atorFilme, contentType) => {
 
     try {
         if (String(contentType).toUpperCase() == 'APPLICATION/JSON') {
-
             if (atorFilme.id_filme == '' || atorFilme.id_filme == null || atorFilme.id_filme == undefined || atorFilme.id_ator == '' || atorFilme.id_ator == null || atorFilme.id_ator == undefined) {
                 messages.ERROR_REQUIRED_FIELDS.message += '[ID inválido]'
                 return messages.ERROR_REQUIRED_FIELDS
 
             } else {
                 let resultAtorFilme = await atorFilmeDAO.setInsertActorMovie(atorFilme)
-
                 if (resultAtorFilme) {
                     let id = await atorFilmeDAO.getSelectLastId()
 
-                    if (id) {
+                    if (id !== false) {
+
                         messages.HEADER.status = messages.SUCCESS_CREATED_ITEM.status
                         messages.HEADER.status_code = messages.SUCCESS_CREATED_ITEM.status_code
                         messages.HEADER.message = messages.SUCCESS_CREATED_ITEM.message
-                        resultAtorFilme.id = id
                         messages.HEADER.items.ator_filme = resultAtorFilme
 
                         return messages.HEADER
@@ -204,7 +202,7 @@ const inserirAtorFilme = async (atorFilme, contentType) => {
 
 }
 
-const atualizarAtorFilme= async (id_filme, id_ator, contentType) => {
+const atualizarAtorFilme = async (id_filme, id_ator, contentType) => {
     let messages = JSON.parse(JSON.stringify(DEFAULT_MESSAGES))
 
     try {
