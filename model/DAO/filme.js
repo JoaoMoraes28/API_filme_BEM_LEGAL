@@ -45,7 +45,7 @@ async function getSelectAllMovies() {
         let sql = "select * from tbl_filme order by id desc"
         //Encaminha para o banco de dados o script SQL
         let result = await prisma.$queryRawUnsafe(sql)
-        
+
         if (result) {
             return result
         } else {
@@ -81,15 +81,16 @@ async function getSelectByIdMovie(id) {
 //Insere um filme novo no banco de dados
 async function setInsertMovie(filme) {
     try {
-        let sql = `insert into tbl_filme (nome, sinopse, data_lancamento, duracao, orcamento, trailer, capa)
+        let sql = `insert into tbl_filme (nome, sinopse, data_lancamento, classificacao, duracao, orcamento, trailer, capa)
                     VALUES ('${filme.nome}',
                             '${filme.sinopse}',
                             '${filme.data_lancamento}',
+                            ${filme.classificacao[0].id},
                             '${filme.duracao}',
                             '${filme.orcamento}',
                             '${filme.trailer}',
                             '${filme.capa}'
-                            );`
+                            )`
         let result = await prisma.$executeRawUnsafe(sql)
 
         if (result) {
@@ -109,7 +110,7 @@ async function setInsertMovie(filme) {
 const getSelectLastId = async () => {
     try {
         let sql = 'select id from tbl_filme order by id desc limit 1'
-        
+
         let result = await prisma.$queryRawUnsafe(sql)
         if (Array.isArray(result)) {
             return Number(result[0].id)
@@ -134,7 +135,8 @@ async function setUpdateMovies(filme) {
         duracao = '${filme.duracao}',
         orcamento = '${filme.orcamento}',
         trailer = '${filme.trailer}',
-        capa = '${filme.capa}'
+        capa = '${filme.capa}',
+        classificacao = ${filme.classificacao[0].id}
         
         WHERE id = ${filme.id}`
 

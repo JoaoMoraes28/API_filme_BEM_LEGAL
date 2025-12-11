@@ -11,6 +11,7 @@
 const filmeDAO = require('../../model/DAO/filme.js')
 const filmeGeneroDAO = require('../../model/DAO/filme_genero.js')
 const atorFilmeDAO = require('../../model/DAO/ator_filme.js')
+const clasDAO = require('../classificacao_ind/controller_classificacao.js')
 const DEFAULT_MESSAGES = require('../modulo/config_messages.js')
 const controller_filme_genero = require('./controller_filme_genero.js')
 const controller_ator_filme = require('../ator_filme/controller_ator_filme.js')
@@ -25,50 +26,55 @@ const listarFilmes = async () => {
 
         if (resultFilmes) {
             if (resultFilmes.length > 0) {
-                let i = 0
-                for (let filme of resultFilmes) {
 
-                    if (filme.ativo == 0) {
-                        delete resultFilmes[i]
+                let resultFilterFilme = resultFilmes.filter(filme => filme.ativo == 1)
+
+                for (let filme of resultFilterFilme) {
+                    let resultClas = await clasDAO.listarClasId(filme.classificacao)
+
+                    if (resultClas.status_code == 200) {
+                        filme.classificacao = resultClas.items.classificacao[0].classificacao
 
                     } else {
-                        let resultGenerosFilme = await controller_filme_genero.selecionarGenerosIdFilme(filme.id)
-
-                        if (resultGenerosFilme) {
-                            if (resultGenerosFilme.status_code == 200) {
-                                filme.generos = resultGenerosFilme.items.genero
-
-                            } else {
-                                filme.generos = 'Nenhum gênero associado a este Filme'
-
-                            }
-                        } else {
-                            messages.ERROR_INTERNAL_SERVER_CONTROLLER += '[CONTROLLER FILME_GENERO]'
-                            return messages.ERROR_INTERNAL_SERVER_CONTROLLER
-                        }
-
-                        let resultAtorFilme = await controller_ator_filme.selecionarAtoresIdFilme(filme.id)
-                        if (resultAtorFilme) {
-                            console.log(resultAtorFilme)
-                            if (resultAtorFilme.status_code == 200) {
-                                filme.elenco = resultAtorFilme.items.elenco
-
-                            } else {
-                                filme.elenco = 'Nenhum ator associado a este Filme'
-
-                            }
-                        } else {
-                            messages.ERROR_INTERNAL_SERVER_CONTROLLER += '[CONTROLLER ATOR_FILME]'
-                            return messages.ERROR_INTERNAL_SERVER_CONTROLLER
-                        }
+                        filme.classificacao = 'Classificação não encontrada'
                     }
-                    i++
+
+                    let resultGenerosFilme = await controller_filme_genero.selecionarGenerosIdFilme(filme.id)
+
+                    if (resultGenerosFilme) {
+                        if (resultGenerosFilme.status_code == 200) {
+                            filme.generos = resultGenerosFilme.items.genero
+
+                        } else {
+                            filme.generos = 'Nenhum gênero associado a este Filme'
+
+                        }
+                    } else {
+                        messages.ERROR_INTERNAL_SERVER_CONTROLLER += '[CONTROLLER FILME_GENERO]'
+                        return messages.ERROR_INTERNAL_SERVER_CONTROLLER
+                    }
+
+                    let resultAtorFilme = await controller_ator_filme.selecionarAtoresIdFilme(filme.id)
+                    if (resultAtorFilme) {
+                        if (resultAtorFilme.status_code == 200) {
+                            filme.elenco = resultAtorFilme.items.elenco
+
+                        } else {
+                            filme.elenco = 'Nenhum ator associado a este Filme'
+
+                        }
+                    } else {
+                        messages.ERROR_INTERNAL_SERVER_CONTROLLER += '[CONTROLLER ATOR_FILME]'
+                        return messages.ERROR_INTERNAL_SERVER_CONTROLLER
+                    }
+
+
                 }
 
                 messages.HEADER.status = messages.SUCCESS_REQUEST.status
                 messages.HEADER.status_code = messages.SUCCESS_REQUEST.status_code
                 messages.HEADER.message = messages.SUCCESS_REQUEST.message
-                messages.HEADER.items.filmes = resultFilmes
+                messages.HEADER.items.filmes = resultFilterFilme
 
                 return messages.HEADER
             } else {
@@ -82,7 +88,6 @@ const listarFilmes = async () => {
         }
 
     } catch (error) {
-        console.log(error)
         return messages.ERROR_INTERNAL_SERVER_CONTROLLER
     }
 
@@ -98,7 +103,7 @@ const buscarFilmeId = async (id) => {
             let resultFilme = await filmeDAO.getSelectByIdMovie(Number(id))
 
             if (resultFilme) {
-                if (resultFilme.length > 0) {
+                if (resultFilme.length > 0 && resultFilme[0].ativo == 1) {
 
                     let resultGenerosFilmes = await controller_filme_genero.selecionarGenerosIdFilme(id)
 
@@ -113,6 +118,15 @@ const buscarFilmeId = async (id) => {
                                 } else {
                                     resultFilme[0].elenco = resultAtorFilme.items.elenco
 
+                                }
+
+                                let resultClas = await clasDAO.listarClasId(resultFilme[0].classificacao)
+
+                                if (resultClas.status_code == 200) {
+                                    resultFilme[0].classificacao = resultClas.items.classificacao[0].classificacao
+
+                                } else {
+                                    resultFilme[0].classificacao = 'Classificação não encontrada'
                                 }
 
                                 resultFilme[0].generos = resultGenerosFilmes.items.genero
@@ -157,6 +171,7 @@ const buscarFilmeId = async (id) => {
         }
 
     } catch (error) {
+        console.log(error)
         return messages.ERROR_INTERNAL_SERVER_CONTROLLER
 
     }
@@ -208,23 +223,33 @@ const inserirFilme = async (filme, contentType) => {
                             }
                         }
 
-                        filme.id = id
-                        messages.HEADER.items.filme = filme
-                        messages.HEADER.status = messages.SUCCESS_CREATED_ITEM.status
-                        messages.HEADER.status_code = messages.SUCCESS_CREATED_ITEM.status_code
-                        messages.HEADER.message = messages.SUCCESS_CREATED_ITEM.message
+                        let responseClasFilme = await clasDAO.listarClasId(filme.classificacao[0].id)
 
-                        //Adicionando o nome do genero na response
-                        delete filme.generos
-                        let resultGenerosFilme = await controller_filme_genero.selecionarGenerosIdFilme(id)
-                        filme.generos = resultGenerosFilme.items.genero
+                        if (responseClasFilme.status_code == 200) {
+                            filme.classificacao = responseClasFilme.items.classificacao[0].classificacao
+                            filme.id = id
+                            messages.HEADER.items.filme = filme
+                            messages.HEADER.status = messages.SUCCESS_CREATED_ITEM.status
+                            messages.HEADER.status_code = messages.SUCCESS_CREATED_ITEM.status_code
+                            messages.HEADER.message = messages.SUCCESS_CREATED_ITEM.message
 
-                        //Adicionando o elenco na response
-                        delete filme.elenco
-                        let resultElenco = await controller_ator_filme.selecionarAtoresIdFilme(id)
-                        filme.elenco = resultElenco
+                            //Adicionando o nome do genero na response
+                            delete filme.genero
+                            let resultGenerosFilme = await controller_filme_genero.selecionarGenerosIdFilme(id)
+                            filme.generos = resultGenerosFilme.items.genero
 
-                        return messages.HEADER
+                            //Adicionando o elenco na response
+                            delete filme.elenco
+                            let resultElenco = await controller_ator_filme.selecionarAtoresIdFilme(id)
+                            filme.elenco = resultElenco.items.elenco
+
+                            return messages.HEADER
+
+                        } else {
+                            messages.ERROR_RELATION_INSERT.message += '[Classificação não encontrada]'
+                            return messages.ERROR_RELATION_INSERT
+
+                        }
 
                     } else {
                         return messages.ERROR_INTERNAL_SERVER_MODEL
@@ -287,9 +312,10 @@ const atualizarFilme = async (filme, id, contentType) => {
                         messages.HEADER.status = messages.SUCCESS_UPDATED_ITEM.status
                         messages.HEADER.status_code = messages.SUCCESS_UPDATED_ITEM.status_code
                         messages.HEADER.message = messages.SUCCESS_UPDATED_ITEM.message
-                        messages.HEADER.items.filme = filme
+                        delete messages.HEADER.items
 
                         return messages.HEADER
+
 
                     } else {
                         return messages.ERROR_INTERNAL_SERVER_MODEL
@@ -325,7 +351,7 @@ const excluirFilme = async (id) => {
         // Validação de ID, chama função da controller que verifica no banco de dados se o ID existe, e valida o ID
         let validarId = await buscarFilmeId(id)
 
-        if (validarId.status_code == 200) {
+        if (validarId.status_code != 404) {
             //Atualiza um novo filme no banco de dados
             let resultFilme = await filmeDAO.setDeleteMovie(id)
 

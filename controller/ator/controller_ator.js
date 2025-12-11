@@ -33,6 +33,7 @@ const listarAtores = async () => {
                     }
                 }
 
+                console.log(resultAtor)
                 messages.HEADER.status = messages.SUCCESS_REQUEST.status
                 messages.HEADER.status_code = messages.SUCCESS_REQUEST.status_code
                 messages.HEADER.message = messages.SUCCESS_REQUEST.message
