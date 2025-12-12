@@ -56,9 +56,9 @@ async function setInsertDirector(diretor) {
     try {
 
         let sql = `INSERT INTO tbl_diretor(nome, data_nascimento, nacionalidade, idade)
-                    VALUES('${diretor.nome}'
-                            '${diretor.data_nascimento}'
-                            ${diretor.nacionalidade}
+                    VALUES('${diretor.nome}',
+                            '${diretor.data_nascimento}',
+                            ${diretor.nacionalidade},
                             ${diretor.idade}
                     )`
 
@@ -102,9 +102,9 @@ const getSelectLastId = async () => {
 const updateDirector = async (id, diretor) => {
     try {
         let sql = `update tbl_diretor set
-        nome = '${diretor.nome}'
-        data_nascimento = '${diretor.data_nascimento}'
-        nacionalidade = ${diretor.id_pais}
+        nome = '${diretor.nome}',
+        data_nascimento = '${diretor.data_nascimento}',
+        nacionalidade = ${diretor.nacionalidade},
         idade = ${diretor.idade}
         
         where id = ${id}`
@@ -124,10 +124,11 @@ const updateDirector = async (id, diretor) => {
     }
 }
 
-async function deleteDirector(id_ator) {
+async function deleteDirector(id_diretor) {
     try {
-        let sql = `update from tbl_diretor set
-                    ativo = false`
+        let sql = `update tbl_diretor set
+                    ativo = false
+                    where id = ${id_diretor}`
 
         let result = await prisma.$executeRawUnsafe(sql)
 

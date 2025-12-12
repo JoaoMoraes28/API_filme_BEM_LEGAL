@@ -51,7 +51,6 @@ const listarPaisId = async (id) => {
 
         } else {
             let resultPais = await paisOrigemDAO.getCountryId(id)
-
             if (resultPais) {
                 if (resultPais.length > 0) {
                     messages.HEADER.status = messages.SUCCESS_REQUEST.status

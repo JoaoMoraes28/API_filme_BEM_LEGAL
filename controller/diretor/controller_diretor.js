@@ -19,11 +19,13 @@ const listarDiretores = async () => {
 
         if (resultDiretor) {
             if (resultDiretor.length > 0) {
-                for (let diretor of resultDiretor) {
-                    let pais = paisDAO.listarPaisId(ator.nacionalidade)
+                let resultDiretorFilter = resultDiretor.filter(diretor => diretor.ativo == 1)
 
+                for (let diretor of resultDiretorFilter) {
+                    let pais = await paisDAO.listarPaisId(diretor.nacionalidade)
+                    
                     if (pais.status_code == 200) {
-                        diretor.nacionalidade = pais
+                        diretor.nacionalidade = pais.items.pais[0].pais
 
                     } else {
                         diretor.nacionalidade = 'País não cadastrado'
@@ -34,7 +36,7 @@ const listarDiretores = async () => {
                 messages.HEADER.status = messages.SUCCESS_REQUEST.status
                 messages.HEADER.status_code = messages.SUCCESS_REQUEST.status_code
                 messages.HEADER.message = messages.SUCCESS_REQUEST.message
-                messages.HEADER.items.diretores = resultDiretor
+                messages.HEADER.items.diretores = resultDiretorFilter
 
                 return messages.HEADER
 
@@ -64,19 +66,19 @@ const listarDiretorId = async (id) => {
             let resultDiretor = await diretorDAO.getSelectById(id)
 
             if (resultDiretor) {
-                if (resultDiretor.length > 0) {
-                    let pais = paisDAO.listarPaisId(resultDiretor.nacionalidade)
+                if (resultDiretor.length > 0 && resultDiretor[0].ativo == 1) {
+                    let pais = await paisDAO.listarPaisId(resultDiretor[0].nacionalidade)
 
                     if (pais.status_code == 200) {
                         messages.HEADER.status = messages.SUCCESS_REQUEST.status
                         messages.HEADER.status_code = messages.SUCCESS_REQUEST.status_code
                         messages.HEADER.message = messages.SUCCESS_REQUEST.message
-                        resultAtor.nacionalidade = pais.pais
+                        resultDiretor.nacionalidade = pais.items.pais[0].pais
                         messages.HEADER.items.diretor = resultDiretor
 
                         return messages.HEADER
                     } else {
-                        messages.ERROR_NOT_FOUND += '[País não encontrado]'
+                        messages.ERROR_NOT_FOUND.message += '[País não encontrado]'
                         return messages.ERROR_NOT_FOUND
 
                     }
@@ -102,9 +104,9 @@ const inserirDiretor = async (diretor, contentType) => {
 
     try {
         if (String(contentType).toUpperCase() == 'APPLICATION/JSON') {
-            let resultValidar = validarDadosDiretor(diretor)
+            let resultValidar = await validarDadosDiretor(diretor)
 
-            if (!resultValidar) {
+            if (resultValidar != false) {
                 return resultValidar
 
             } else {
@@ -113,19 +115,20 @@ const inserirDiretor = async (diretor, contentType) => {
                 if (resultDiretor) {
                     let id = await diretorDAO.getSelectLastId()
                     if (id) {
-                        let pais = paisDAO.listarPaisId(diretor.nacionalidade)
+                        let pais = await paisDAO.listarPaisId(diretor.nacionalidade)
 
                         if (pais.status_code == 200) {
                             messages.HEADER.status = messages.SUCCESS_CREATED_ITEM.status
                             messages.HEADER.status_code = messages.SUCCESS_CREATED_ITEM.status_code
                             messages.HEADER.message = messages.SUCCESS_CREATED_ITEM.message
-                            diretor.nacionalidade = pais
+                            diretor.nacionalidade = pais.items.pais[0].pais
                             diretor.id = id
                             messages.HEADER.items.diretor = diretor
 
                             return messages.HEADER
                         } else {
-                            messages.ERROR_NOT_FOUND += '[País não encontrado]'
+                            messages.ERROR_NOT_FOUND.message += '[País não encontrado]'
+                            return messages.ERROR_NOT_FOUND
 
                         }
                         
@@ -164,7 +167,7 @@ const atualizarDiretor = async (id, diretor, contentType) => {
                 return resultValidar
 
             } else {
-                let resultId = await listarAtorId(id)
+                let resultId = await listarDiretorId(id)
 
                 if (resultId.status_code == 200) {
                     let resultDiretor = await diretorDAO.updateDirector(id, diretor)
@@ -238,11 +241,11 @@ const deletarDiretor = async (id) => {
 const validarDadosDiretor = async (diretor) => {
     let messages = JSON.parse(JSON.stringify(DEFAULT_MESSAGES))
 
-    if (diretor.nome == '' || diretor.nome == undefined || diretor.nome == null || diretor.nome.length > 200) {
+    if (diretor.nome == '' || diretor.nome == undefined || diretor.nome == null || diretor.nome.length > 200 || !isNaN(diretor.nome)) {
         messages.ERROR_REQUIRED_FIELDS.message += ' [Nome incorreto]'
         return messages.ERROR_REQUIRED_FIELDS
 
-    } else if (diretor.data_nascimento = '' || diretor.data_nascimento == undefined || diretor.data_nascimento == null || isValidDate(diretor.data_nascimento)) {
+    } else if (diretor.data_nascimento == '' || diretor.data_nascimento == undefined || diretor.data_nascimento == null || diretor.data_nascimento instanceof Date) {
         messages.ERROR_REQUIRED_FIELDS.message += ' [Data Nascimento incorreta]'
         return messages.ERROR_REQUIRED_FIELDS
 
@@ -250,7 +253,7 @@ const validarDadosDiretor = async (diretor) => {
         messages.ERROR_REQUIRED_FIELDS.message += ' [Idade incorreta]'
         return messages.ERROR_REQUIRED_FIELDS
 
-    } else if (diretor.nacionalidade = '' || diretor.nacionalidade == undefined || diretor.nacionalidade == null || typeof (diretor.nacionalidade) != 'number') {
+    } else if (diretor.nacionalidade == '' || diretor.nacionalidade == undefined || diretor.nacionalidade == null || typeof (diretor.nacionalidade) != 'number') {
         messages.ERROR_REQUIRED_FIELDS.message += ' [Nacionalidade incorreta]'
         return messages.ERROR_REQUIRED_FIELDS
 

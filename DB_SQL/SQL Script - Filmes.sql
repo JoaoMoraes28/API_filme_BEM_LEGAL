@@ -2,15 +2,25 @@ CREATE DATABASE db_locadora_filme_ds2m_25_2;
 
 USE db_locadora_filme_ds2m_25_2;
 
+CREATE TABLE tbl_classificacao_indicativa (
+    id int PRIMARY KEY auto_increment not null,
+    classificacao varchar(50) not null
+);
+
 CREATE TABLE tbl_filme (
 	id int PRIMARY KEY auto_increment not null,
 	nome varchar(100) not null,
 	sinopse text null,
 	data_lancamento date null,
 	duracao time not null,
+    classificacao int not null,
+    ativo boolean DEFAULT(true),
 	orcamento DECIMAL(11,2) not null,
 	trailer varchar(200) null,
-	capa varchar(200) not null
+	capa varchar(200) not null,
+    
+	CONSTRAINT fk_pais_classificacao
+    FOREIGN KEY (classificacao) REFERENCES tbl_classificacao_indicativa(id)
 );
 
 CREATE TABLE tbl_pais_origem (
@@ -28,17 +38,13 @@ CREATE TABLE tbl_genero (
     genero varchar(50) not null
 );
 
-CREATE TABLE tbl_classificacao_indicativa (
-    id int PRIMARY KEY auto_increment not null,
-    classificacao varchar(50) not null
-);
-
 CREATE TABLE tbl_ator (
     id int PRIMARY KEY auto_increment not null,
     nome varchar(200) not null,
     data_nascimento date not null,
     nacionalidade int not null,
     idade int not null,
+    ativo boolean DEFAULT(true),
 
     CONSTRAINT fk_ator_pais
     FOREIGN KEY (nacionalidade) REFERENCES tbl_pais_origem(id)
@@ -50,6 +56,7 @@ CREATE TABLE tbl_diretor (
     data_nascimento date not null,
     nacionalidade int not null,
     idade int not null,
+    ativo boolean DEFAULT(true),
 
     CONSTRAINT fk_diretor_pais
     FOREIGN KEY (nacionalidade) REFERENCES tbl_pais_origem(id)
