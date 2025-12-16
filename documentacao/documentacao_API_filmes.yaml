@@ -14,7 +14,7 @@ externalDocs:
   description: Find out more about Swagger
   url: http://swagger.io
 servers:
-  - url: http://
+  - url: http://localhost:8080/
 paths:
   /v1/locadora/filme:
     post:
@@ -561,8 +561,225 @@ paths:
           description: Invalid ID supplied
         '404':
           description: Country not found                
+
+  /v1/locadora/ator:
+    post:
+      tags:
+        - Ator
+      summary: Adiciona um ator
+      description: Adiciona um ator
+      requestBody:
+        description: JSON contendo os dados do ator deve ser inserido no sistema
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/atorPost'
+        required: true
+      responses:
+        '201':
+          description: Successful operation
+        '400':
+          description: Invalid input
+    get:
+      tags:
+        - Ator
+      summary: Lista todos os atores
+      description: Listagem de todos os atores registrados no sistema
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/atorGet'          
+           
+        '404':
+          description: Not Found
+  /v1/locadora/ator/{id}:
+    get:
+      tags:
+        - Ator
+      summary: Lista um ator
+      description: Retorna um ator pelo ID
+      parameters:
+        - name: id
+          in: path
+          description: ID do ator para retorno
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/atorGet'          
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Actor not found
+    put:
+      tags:
+        - Ator
+      summary: Atualiza um ator
+      description: Atualiza um ator pelo seu ID
+      parameters:
+        - name: id
+          in: path
+          description: ID do ator para retorno
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Dados de atualização para o ator
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/atorPost'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Actor not found
+       
+    delete:
+      tags:
+        - Ator
+      summary: Deleta um ator
+      description: Excluir um ator
+      parameters:
+        - name: id
+          in: path
+          description: ID do ator para retorno
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Actor not found  
           
-          
+  /v1/locadora/diretor:
+    post:
+      tags:
+        - Diretor
+      summary: Adiciona um diretor
+      description: Adiciona um diretor
+      requestBody:
+        description: JSON contendo os dados do diretor deve ser inserido no sistema
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/diretorPost'
+        required: true
+      responses:
+        '201':
+          description: Successful operation
+        '400':
+          description: Invalid input
+    get:
+      tags:
+        - Diretor
+      summary: Lista todos os diretores
+      description: Listagem de todos os diretores registrados no sistema
+      responses:
+        '200':
+          description: Swaggeruccessful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/diretorGet'          
+           
+        '404':
+          description: Not Found
+  /v1/locadora/diretor/{id}:
+    get:
+      tags:
+        - Diretor
+      summary: Lista um diretor
+      description: Retorna um diretor pelo ID
+      parameters:
+        - name: id
+          in: path
+          description: ID do diretor para retorno
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/diretorGet'          
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Director not found
+    put:
+      tags:
+        - Diretor
+      summary: Atualiza um diretor
+      description: Atualiza um diretor pelo seu ID
+      parameters:
+        - name: id
+          in: path
+          description: ID do diretor para retorno
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Dados de atualização para o diretor
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/diretorPost'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Director not found
+       
+    delete:
+      tags:
+        - Diretor
+      summary: Deleta um diretor
+      description: Excluir um diretor
+      parameters:
+        - name: id
+          in: path
+          description: ID do diretor para retorno
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Director not found
+
 components:
   schemas:
     filmePost:
@@ -572,6 +789,9 @@ components:
         - duracao
         - orcamento
         - capa
+        - genero
+        - elenco
+        - classificacao
       type: object
       properties:
         nome:
@@ -590,7 +810,28 @@ components:
           type: string
         capa:
           type: string
-          
+        genero:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+        elenco:
+          type: array
+          items:
+            type: object
+            properties:
+              id_ator:
+                type: integer
+        classificacao:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer        
+            
     filmeGet:
       type: object
       properties:
@@ -612,6 +853,27 @@ components:
           type: string
         capa:
           type: string
+        genero:
+          type: array
+          items:
+            type: object
+            properties:
+              genero:
+                type: string
+        elenco:
+          type: array
+          items:
+            type: object
+            properties:
+              ator:
+                type: string
+        classificacao:
+          type: array
+          items:
+            type: object
+            properties:
+              classificacao_indicativa:
+                type: string  
           
     filmePut:
       required:
@@ -620,10 +882,11 @@ components:
         - duracao
         - orcamento
         - capa
+        - elenco
+        - genero
+        - classificacao
       type: object
       properties:
-        id:
-          type: integer
         nome:
           type: string
         sinopse:
@@ -640,6 +903,27 @@ components:
           type: string
         capa:
           type: string
+        genero:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+        elenco:
+          type: array
+          items:
+            type: object
+            properties:
+              id_ator:
+                type: integer
+        classificacao:
+          type: array
+          items:
+            type: object
+            properties:
+              classificacao:
+                type: integer     
           
     idiomaGet:
       type: object
@@ -708,7 +992,83 @@ components:
         id:
           type: integer
         classificacao:
-          type: string      
+          type: string 
+
+    atorPost:
+      required:
+        - nome
+        - data_nascimento
+        - nacionalidade
+        - idade
+        - ativo
+      type: object
+      properties:
+        nome:
+          type: string
+        data_nascimento:
+          type: string
+          format: date
+        nacionalidade:
+          type: integer
+        idade:
+          type: integer
+        ativo:
+          type: integer
+
+    atorGet:
+      type: object
+      properties:
+        id:
+          type: integer
+        nome:
+          type: string
+        data_nascimento:
+          type: string
+          format: date
+        nacionalidade:
+          type: string
+        idade:
+          type: integer
+        ativo:
+          type: integer
+
+    diretorPost:
+      required:
+        - nome
+        - data_nascimento
+        - nacionalidade
+        - idade
+        - ativo
+      type: object
+      properties:
+        nome:
+          type: string
+        data_nascimento:
+          type: string
+          format: date
+        nacionalidade:
+          type: integer
+        idade:
+          type: integer
+        ativo:
+          type: integer
+
+    diretorGet:
+      type: object
+      properties:
+        id:
+          type: integer
+        nome:
+          type: string
+        data_nascimento:
+          type: string
+          format: date
+        nacionalidade:
+          type: string
+        idade:
+          type: integer
+        ativo:
+          type: integer                              
           
   requestBodies:
     filme:
@@ -717,4 +1077,3 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/filmePost'
-
